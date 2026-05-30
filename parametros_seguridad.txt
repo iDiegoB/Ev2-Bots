@@ -1,0 +1,23 @@
+========================================================================
+ERP SEGURIDAD LTDA - CONFIGURACIÓN BASE DE PARÁMETROS DE SEGURIDAD
+========================================================================
+Este archivo contiene la configuración base de seguridad global para el portal
+ERP y los servicios de interoperabilidad del sistema de control interno.
+
+[CONFIGURACIÓN DE SESIONES Y ACCESO]
+Regla 1: Tiempo máximo de inactividad de sesión = 15 minutos
+         (Cierre automático de sesión tras 15 minutos de inactividad de usuario)
+
+Regla 2: Intentos fallidos permitidos antes de bloqueo de cuenta = 3 intentos
+         (Bloqueo temporal automático por 30 minutos al superar el límite)
+
+[POLÍTICAS DE COMPLEJIDAD DE CREDENCIALES]
+Regla 3: Longitud mínima obligatoria de contraseña = 12 caracteres
+         (Debe incluir al menos 1 mayúscula, 1 minúscula, 1 número y 1 carácter especial)
+
+Regla 4: Rotación obligatoria de contraseña corporativa = Cada 90 días
+
+[AUDITORÍA DE INTEGRIDAD DE DATOS (SIEM)]
+Regla 5: Nivel de registro de auditoría de transacciones = DETALLADO (HIGH)
+         (Cada petición de interoperabilidad se registra con firma SHA-256)
+========================================================================
