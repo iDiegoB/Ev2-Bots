@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alertas de Inventario</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      padding: 20px;
+    }
+
+    nav {
+      background: #2c3e50;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    nav strong { font-size: 16px; }
+    nav span   { font-size: 13px; opacity: 0.7; }
+
+    /* ── Indicador "en vivo" ── */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #d5f5e3;
+      color: #1e8449;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #27ae60;
+      border-radius: 50%;
+      animation: parpadeo 1.2s infinite;
+    }
+    @keyframes parpadeo {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    /* ── Fila superior: título + acciones ── */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto 16px;
+    }
+    .toolbar h2 { font-size: 16px; color: #555; }
+
+    .acciones { display: flex; gap: 8px; align-items: center; }
+
+    button {
+      padding: 7px 14px;
+      border: none;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.85; }
+    .btn-primary  { background: #3498db; color: white; }
+    .btn-success  { background: #27ae60; color: white; }
+    .btn-light    { background: white;   color: #555; border: 1px solid #ddd; }
+
+    /* ── Resumen de contadores ── */
+    .contadores {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto 20px;
+    }
+    .contador-card {
+      background: white;
+      border-radius: 10px;
+      padding: 14px 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      border-left: 4px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .contador-card.rojo   { border-left-color: #e74c3c; }
+    .contador-card.naranja{ border-left-color: #e67e22; }
+    .contador-card.azul   { border-left-color: #3498db; }
+    .contador-card.verde  { border-left-color: #27ae60; }
+
+    .contador-icono { font-size: 24px; }
+    .contador-num {
+      font-size: 26px;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .contador-card.rojo    .contador-num { color: #e74c3c; }
+    .contador-card.naranja .contador-num { color: #e67e22; }
+    .contador-card.azul    .contador-num { color: #3498db; }
+    .contador-card.verde   .contador-num { color: #27ae60; }
+    .contador-label { font-size: 11px; color: #888; margin-top: 2px; }
+
+    /* ── Filtros de tipo ── */
+    .filtros {
+      display: flex;
+      gap: 8px;
+      max-width: 900px;
+      margin: 0 auto 14px;
+      flex-wrap: wrap;
+    }
+    .filtro-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #ddd;
+      background: white;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .filtro-btn:hover { border-color: #aaa; color: #333; }
+    .filtro-btn.activo { background: #2c3e50; color: white; border-color: #2c3e50; }
+
+    /* ── Lista de alertas ── */
+    .lista-alertas {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alerta-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-left: 5px solid #ddd;
+      animation: entrar 0.3s ease;
+      position: relative;
+    }
+    @keyframes entrar {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Colores por tipo */
+    .alerta-card.critico { border-left-color: #e74c3c; }
+    .alerta-card.bajo    { border-left-color: #e67e22; }
+    .alerta-card.bodega  { border-left-color: #3498db; }
+    .alerta-card.entrada { border-left-color: #27ae60; }
+
+    .alerta-icono {
+      font-size: 22px;
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .alerta-info { flex: 1; }
+    .alerta-titulo {
+      font-size: 14px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 2px;
+    }
+    .alerta-detalle {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .alerta-meta {
+      text-align: right;
+      min-width: 80px;
+    }
+    .alerta-tiempo {
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+
+    /* Badge de tipo */
+    .badge-tipo {
+      font-size: 10px;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+    .badge-critico { background: #fadbd8; color: #e74c3c; }
+    .badge-bajo    { background: #fdebd0; color: #e67e22; }
+    .badge-bodega  { background: #d6eaf8; color: #2980b9; }
+    .badge-entrada { background: #d5f5e3; color: #1e8449; }
+
+    /* Botón cerrar alerta */
+    .btn-cerrar {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+    .btn-cerrar:hover { color: #e74c3c; opacity: 1; }
+
+    /* Nuevo indicador (punto rojo parpadeante en alertas nuevas) */
+    .nuevo-dot {
+      width: 8px;
+      height: 8px;
+      background: #e74c3c;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      right: 36px;
+      animation: parpadeo 1s infinite;
+    }
+
+    /* ── Mensaje si no hay alertas ── */
+    .sin-alertas {
+      text-align: center;
+      padding: 50px 20px;
+      color: #bbb;
+      font-size: 14px;
+    }
+    .sin-alertas .icono { font-size: 40px; margin-bottom: 10px; }
+
+    /* ── Toast de nueva alerta (aparece arriba) ── */
+    #toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #2c3e50;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 999;
+      animation: entrar 0.3s ease;
+      max-width: 300px;
+    }
+    #toast.visible { display: block; }
+    #toast strong { display: block; margin-bottom: 2px; }
+
+    .scrum-tag {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: #3498db;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toast de nueva alerta -->
+<div id="toast"></div>
+
+<div class="scrum-tag">SCRUM-37</div>
+
+<nav>
+  <strong>📦 Sistema de Inventario</strong>
+  <span>Inventario &rsaquo; Alertas en Tiempo Real</span>
+</nav>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <h2>Alertas de Inventario</h2>
+    <div class="live-badge"><div class="live-dot"></div> EN VIVO</div>
+  </div>
+  <div class="acciones">
+    <button class="btn-light" onclick="marcarTodasLeidas()">✓ Marcar todas como leídas</button>
+    <button class="btn-success" onclick="simularAlerta()">+ Simular alerta</button>
+    <button class="btn-primary" onclick="limpiarAlertas()">🗑 Limpiar todo</button>
+  </div>
+</div>
+
+<!-- Contadores -->
+<div class="contadores">
+  <div class="contador-card rojo">
+    <div class="contador-icono">🚨</div>
+    <div>
+      <div class="contador-num" id="cnt-critico">2</div>
+      <div class="contador-label">Sin stock</div>
+    </div>
+  </div>
+  <div class="contador-card naranja">
+    <div class="contador-icono">⚠️</div>
+    <div>
+      <div class="contador-num" id="cnt-bajo">4</div>
+      <div class="contador-label">Stock bajo</div>
+    </div>
+  </div>
+  <div class="contador-card azul">
+    <div class="contador-icono">🏭</div>
+    <div>
+      <div class="contador-num" id="cnt-bodega">1</div>
+      <div class="contador-label">Bodega llena</div>
+    </div>
+  </div>
+  <div class="contador-card verde">
+    <div class="contador-icono">📥</div>
+    <div>
+      <div class="contador-num" id="cnt-entrada">3</div>
+      <div class="contador-label">Entradas recientes</div>
+    </div>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="filtros">
+  <button class="filtro-btn activo" onclick="filtrar('todos', this)">Todas (10)</button>
+  <button class="filtro-btn" onclick="filtrar('critico', this)">🚨 Sin stock</button>
+  <button class="filtro-btn" onclick="filtrar('bajo', this)">⚠️ Stock bajo</button>
+  <button class="filtro-btn" onclick="filtrar('bodega', this)">🏭 Bodega llena</button>
+  <button class="filtro-btn" onclick="filtrar('entrada', this)">📥 Entradas</button>
+</div>
+
+<!-- Lista de alertas -->
+<div class="lista-alertas" id="listaAlertas"></div>
+
+<script>
+  // ── Datos de alertas iniciales ──
+  let alertas = [
+    { id:1,  tipo:'critico', icono:'🚨', titulo:'Sin stock: Resistencia 1kΩ x100',      detalle:'PROD-012 · Bodega Central — Stock: 0 unidades',          tiempo:'hace 2 min',  nueva:true  },
+    { id:2,  tipo:'critico', icono:'🚨', titulo:'Sin stock: Raspberry Pi 4 2GB',          detalle:'PROD-005 · Bodega Sur — Stock: 0 unidades',               tiempo:'hace 5 min',  nueva:true  },
+    { id:3,  tipo:'bajo',    icono:'⚠️', titulo:'Stock bajo: Arduino UNO R3',             detalle:'PROD-002 · Bodega Norte — 8 un. (mínimo: 20 un.)',         tiempo:'hace 8 min',  nueva:false },
+    { id:4,  tipo:'bajo',    icono:'⚠️', titulo:'Stock bajo: Módulo Relay 4Ch',           detalle:'PROD-004 · Bodega Sur — 5 un. (mínimo: 15 un.)',           tiempo:'hace 12 min', nueva:false },
+    { id:5,  tipo:'bajo',    icono:'⚠️', titulo:'Stock bajo: Módulo WiFi ESP32',          detalle:'PROD-006 · Bodega Norte — 12 un. (mínimo: 30 un.)',        tiempo:'hace 15 min', nueva:false },
+    { id:6,  tipo:'bajo',    icono:'⚠️', titulo:'Stock bajo: Cable Dupont x40',           detalle:'PROD-011 · Bodega Central — 9 un. (mínimo: 25 un.)',       tiempo:'hace 20 min', nueva:false },
+    { id:7,  tipo:'bodega',  icono:'🏭', titulo:'Bodega Sur casi llena',                  detalle:'BOD-002 · Capacidad al 94% (4.700 / 5.000 unidades)',      tiempo:'hace 30 min', nueva:false },
+    { id:8,  tipo:'entrada', icono:'📥', titulo:'Entrada registrada: Sensor HC-SR04',     detalle:'PROD-001 · +50 unidades en Bodega Norte — Usuario: jperez',tiempo:'hace 1 hr',   nueva:false },
+    { id:9,  tipo:'entrada', icono:'📥', titulo:'Entrada registrada: Arduino UNO R3',     detalle:'PROD-002 · +50 unidades en tránsito — Usuario: admin',     tiempo:'hace 2 hr',   nueva:false },
+    { id:10, tipo:'entrada', icono:'📥', titulo:'Entrada registrada: Protoboard 830p',    detalle:'PROD-010 · +100 unidades en Bodega Central — Usuario: mlopez', tiempo:'hace 3 hr', nueva:false },
+  ];
+
+  let filtroActual = 'todos';
+  let nextId = 11;
+
+  // ── Alertas simuladas para el botón ──
+  const alertasSimuladas = [
+    { tipo:'critico', icono:'🚨', titulo:'Sin stock: LCD 16x2 I2C',           detalle:'PROD-003 · Bodega Sur — Stock: 0 unidades'             },
+    { tipo:'bajo',    icono:'⚠️', titulo:'Stock bajo: Protoboard 830p',        detalle:'PROD-010 · Bodega Norte — 3 un. (mínimo: 20 un.)'      },
+    { tipo:'bodega',  icono:'🏭', titulo:'Bodega Norte al límite',             detalle:'BOD-001 · Capacidad al 91% (7.280 / 8.000 unidades)'   },
+    { tipo:'entrada', icono:'📥', titulo:'Entrada registrada: Raspberry Pi 4', detalle:'PROD-005 · +15 unidades en Bodega Sur — Usuario: cgomez'},
+  ];
+  let simIdx = 0;
+
+  // ── Render de una alerta ──
+  function renderAlerta(a) {
+    return `
+      <div class="alerta-card ${a.tipo}" id="alerta-${a.id}" data-tipo="${a.tipo}">
+        ${a.nueva ? '<div class="nuevo-dot"></div>' : ''}
+        <div class="alerta-icono">${a.icono}</div>
+        <div class="alerta-info">
+          <div class="alerta-titulo">${a.titulo}</div>
+          <div class="alerta-detalle">${a.detalle}</div>
+        </div>
+        <div class="alerta-meta">
+          <div class="alerta-tiempo">${a.tiempo}</div>
+          <span class="badge-tipo badge-${a.tipo}">${labelTipo(a.tipo)}</span>
+        </div>
+        <button class="btn-cerrar" onclick="cerrarAlerta(${a.id})" title="Cerrar">✕</button>
+      </div>
+    `;
+  }
+
+  function labelTipo(tipo) {
+    return { critico:'Sin stock', bajo:'Stock bajo', bodega:'Bodega llena', entrada:'Entrada' }[tipo] || tipo;
+  }
+
+  // ── Render lista completa ──
+  function renderLista() {
+    const lista = document.getElementById('listaAlertas');
+    const filtradas = filtroActual === 'todos'
+      ? alertas
+      : alertas.filter(a => a.tipo === filtroActual);
+
+    if (filtradas.length === 0) {
+      lista.innerHTML = `
+        <div class="sin-alertas">
+          <div class="icono">✅</div>
+          No hay alertas de este tipo por el momento.
+        </div>`;
+    } else {
+      lista.innerHTML = filtradas.map(renderAlerta).join('');
+    }
+
+    actualizarContadores();
+    actualizarFiltros();
+  }
+
+  // ── Contadores ──
+  function actualizarContadores() {
+    document.getElementById('cnt-critico').textContent = alertas.filter(a => a.tipo === 'critico').length;
+    document.getElementById('cnt-bajo').textContent    = alertas.filter(a => a.tipo === 'bajo').length;
+    document.getElementById('cnt-bodega').textContent  = alertas.filter(a => a.tipo === 'bodega').length;
+    document.getElementById('cnt-entrada').textContent = alertas.filter(a => a.tipo === 'entrada').length;
+  }
+
+  // ── Actualizar texto de filtros ──
+  function actualizarFiltros() {
+    const btns = document.querySelectorAll('.filtro-btn');
+    const labels = ['Todas', '🚨 Sin stock', '⚠️ Stock bajo', '🏭 Bodega llena', '📥 Entradas'];
+    const tipos  = ['todos', 'critico', 'bajo', 'bodega', 'entrada'];
+    btns.forEach((btn, i) => {
+      const count = tipos[i] === 'todos'
+        ? alertas.length
+        : alertas.filter(a => a.tipo === tipos[i]).length;
+      btn.textContent = `${labels[i]} (${count})`;
+    });
+  }
+
+  // ── Filtrar ──
+  function filtrar(tipo, btn) {
+    filtroActual = tipo;
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    renderLista();
+  }
+
+  // ── Cerrar una alerta ──
+  function cerrarAlerta(id) {
+    alertas = alertas.filter(a => a.id !== id);
+    renderLista();
+  }
+
+  // ── Marcar todas como leídas (quita el punto rojo) ──
+  function marcarTodasLeidas() {
+    alertas = alertas.map(a => ({ ...a, nueva: false }));
+    renderLista();
+  }
+
+  // ── Limpiar todo ──
+  function limpiarAlertas() {
+    if (confirm('¿Eliminar todas las alertas?')) {
+      alertas = [];
+      renderLista();
+    }
+  }
+
+  // ── Simular nueva alerta ──
+  function simularAlerta() {
+    const base = alertasSimuladas[simIdx % alertasSimuladas.length];
+    simIdx++;
+    const nueva = { ...base, id: nextId++, tiempo: 'ahora mismo', nueva: true };
+    alertas.unshift(nueva);
+
+    // Si el filtro no coincide, volver a "Todos"
+    if (filtroActual !== 'todos' && filtroActual !== nueva.tipo) {
+      filtroActual = 'todos';
+      document.querySelectorAll('.filtro-btn').forEach((b, i) => b.classList.toggle('activo', i === 0));
+    }
+
+    renderLista();
+    mostrarToast(nueva);
+  }
+
+  // ── Toast de notificación ──
+  function mostrarToast(alerta) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = `<strong>${alerta.icono} Nueva alerta</strong>${alerta.titulo}`;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 3500);
+  }
+
+  // ── Simulación automática cada 15 segundos ──
+  setInterval(() => {
+    simularAlerta();
+  }, 15000);
+
+  // ── Arrancar ──
+  renderLista();
+</script>
+
+</body>
+</html>
