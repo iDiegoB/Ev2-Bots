@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Licencias Médicas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      padding: 20px;
+    }
+
+    nav {
+      background: #2c3e50;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    nav strong { font-size: 16px; }
+    nav span   { font-size: 13px; opacity: 0.7; }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    /* ── Panel / Card base ── */
+    .panel {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .panel-header {
+      background: #f8f9fa;
+      border-bottom: 1px solid #eee;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #555;
+    }
+    .panel-body { padding: 18px; }
+
+    /* ── Formulario ── */
+    .campo { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 13px;
+      color: #333;
+      background: white;
+      outline: none;
+      font-family: 'Segoe UI', sans-serif;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #3498db; }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .campo-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Botón guardar (SCRUM-77: botón estático de "Guardar Licencia") */
+    .btn-guardar {
+      width: 100%;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .btn-guardar:hover { background: #3d5166; }
+
+    .btn-limpiar {
+      width: 100%;
+      background: white;
+      color: #888;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.2s;
+    }
+    .btn-limpiar:hover { border-color: #aaa; color: #555; }
+
+    /* Mensaje de éxito */
+    .msg-exito {
+      display: none;
+      background: #d5f5e3;
+      color: #1e8449;
+      border: 1px solid #a9dfbf;
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* ── Tabla de licencias registradas ── */
+    .tabla-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tabla-header input {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 12px;
+      width: 180px;
+      outline: none;
+    }
+    .tabla-header input:focus { border-color: #3498db; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    th {
+      text-align: left;
+      padding: 9px 12px;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #eee;
+      background: #f8f9fa;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f5f5f5;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    /* Avatar pequeño */
+    .avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+      color: white;
+      margin-right: 6px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .nombre-cell { display: flex; align-items: center; }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+    .badge-medica    { background: #d6eaf8; color: #2471a3; }
+    .badge-dental    { background: #e8daef; color: #7d3c98; }
+    .badge-maternidad{ background: #fdebd0; color: #d35400; }
+    .badge-reposo    { background: #d5f5e3; color: #1e8449; }
+    .badge-otro      { background: #f2f3f4; color: #666; }
+
+    .badge-activa    { background: #d5f5e3; color: #1e8449; }
+    .badge-pendiente { background: #fdebd0; color: #d35400; }
+    .badge-cerrada   { background: #f2f3f4; color: #888; }
+
+    /* Contadores arriba de la tabla */
+    .mini-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .mini-stat {
+      text-align: center;
+    }
+    .mini-stat .num {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .mini-stat .lbl {
+      font-size: 10px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    /* Btn eliminar fila */
+    .btn-del {
+      background: none;
+      border: none;
+      color: #ddd;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+    .btn-del:hover { color: #e74c3c; }
+
+    .scrum-tag {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: #9b59b6;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scrum-tag">SCRUM-75</div>
+
+<nav>
+  <strong>👥 Módulo Recursos Humanos</strong>
+  <span>RRHH &rsaquo; Licencias Médicas</span>
+</nav>
+
+<div class="contenedor">
+
+  <!-- ── Formulario (SCRUM-76) ── -->
+  <div class="panel">
+    <div class="panel-header">📋 Nueva Licencia Médica</div>
+    <div class="panel-body">
+
+      <div class="campo">
+        <label>Trabajador</label>
+        <select id="fTrabajador">
+          <option value="">— Seleccionar —</option>
+          <option>Juan Pérez</option>
+          <option>María López</option>
+          <option>Carlos Gómez</option>
+          <option>Ana Martínez</option>
+          <option>Pedro Rojas</option>
+          <option>Valentina Silva</option>
+          <option>Diego Fuentes</option>
+          <option>Camila Torres</option>
+        </select>
+      </div>
+
+      <!-- SCRUM-76: input "Tipo de licencia" -->
+      <div class="campo">
+        <label>Tipo de licencia</label>
+        <select id="fTipo">
+          <option value="">— Seleccionar —</option>
+          <option value="Médica">Médica</option>
+          <option value="Dental">Dental</option>
+          <option value="Maternidad">Maternidad / Paternidad</option>
+          <option value="Reposo">Reposo domiciliario</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <!-- SCRUM-76: input "Días de licencia" -->
+      <div class="campo-row">
+        <div class="campo">
+          <label>Días de licencia</label>
+          <input type="number" id="fDias" min="1" max="365" placeholder="Ej: 7"/>
+        </div>
+        <div class="campo">
+          <label>Fecha de inicio</label>
+          <input type="date" id="fFecha"/>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label>Diagnóstico / Motivo</label>
+        <textarea id="fMotivo" placeholder="Descripción breve del motivo..."></textarea>
+      </div>
+
+      <div class="campo">
+        <label>N° de Licencia (opcional)</label>
+        <input type="text" id="fNumero" placeholder="Ej: LIC-2025-001"/>
+      </div>
+
+      <!-- SCRUM-77: botón estático "Guardar Licencia" -->
+      <button class="btn-guardar" onclick="guardarLicencia()">💾 Guardar Licencia</button>
+      <button class="btn-limpiar" onclick="limpiarFormulario()">Limpiar formulario</button>
+
+      <div class="msg-exito" id="msgExito">✅ Licencia guardada correctamente</div>
+
+    </div>
+  </div>
+
+  <!-- ── Tabla de licencias ── -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="tabla-header">
+        <span>📂 Licencias Registradas</span>
+        <input type="text" placeholder="🔍 Buscar..." oninput="filtrarTabla(this.value)"/>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      <!-- Mini stats -->
+      <div class="mini-stats">
+        <div class="mini-stat">
+          <div class="num" id="cntTotal">5</div>
+          <div class="lbl">Total</div>
+        </div>
+        <div class="mini-stat">
+          <div class="num" id="cntActiva" style="color:#27ae60">3</div>
+          <div class="lbl">Activas</div>
+        </div>
+        <div class="mini-stat">
+          <div class="num" id="cntPendiente" style="color:#e67e22">1</div>
+          <div class="lbl">Pendientes</div>
+        </div>
+        <div class="mini-stat">
+          <div class="num" id="cntDias" style="color:#3498db">42</div>
+          <div class="lbl">Días totales</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Trabajador</th>
+            <th>Tipo</th>
+            <th>Días</th>
+            <th>Fecha inicio</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="cuerpoTabla"></tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div><!-- fin contenedor -->
+
+<script>
+  const COLORES = ['#3498db','#e74c3c','#27ae60','#9b59b6','#e67e22','#1abc9c','#e91e63','#607d8b'];
+
+  let licencias = [
+    { id:1, trabajador:'María López',    tipo:'Médica',     dias:7,  fecha:'2025-06-01', estado:'Activa'   },
+    { id:2, trabajador:'Pedro Rojas',    tipo:'Reposo',     dias:5,  fecha:'2025-06-05', estado:'Activa'   },
+    { id:3, trabajador:'Diego Fuentes',  tipo:'Dental',     dias:2,  fecha:'2025-06-08', estado:'Activa'   },
+    { id:4, trabajador:'Ana Martínez',   tipo:'Médica',     dias:15, fecha:'2025-05-20', estado:'Pendiente'},
+    { id:5, trabajador:'Carlos Gómez',   tipo:'Maternidad', dias:13, fecha:'2025-05-10', estado:'Cerrada'  },
+  ];
+  let nextId = 6;
+
+  function iniciales(nombre) {
+    return nombre.split(' ').map(p => p[0]).join('').substring(0,2).toUpperCase();
+  }
+  function colorAvatar(nombre) {
+    let h = 0;
+    for (let c of nombre) h += c.charCodeAt(0);
+    return COLORES[h % COLORES.length];
+  }
+  function badgeTipo(tipo) {
+    const map = { 'Médica':'badge-medica', 'Dental':'badge-dental', 'Maternidad':'badge-maternidad', 'Reposo':'badge-reposo', 'Otro':'badge-otro' };
+    return `<span class="badge ${map[tipo] || 'badge-otro'}">${tipo}</span>`;
+  }
+  function badgeEstado(estado) {
+    const map = { 'Activa':'badge-activa', 'Pendiente':'badge-pendiente', 'Cerrada':'badge-cerrada' };
+    return `<span class="badge ${map[estado] || ''}">${estado}</span>`;
+  }
+
+  function renderTabla(data) {
+    data = data || licencias;
+    const tbody = document.getElementById('cuerpoTabla');
+    tbody.innerHTML = data.map(l => `
+      <tr>
+        <td>
+          <div class="nombre-cell">
+            <div class="avatar" style="background:${colorAvatar(l.trabajador)}">${iniciales(l.trabajador)}</div>
+            ${l.trabajador}
+          </div>
+        </td>
+        <td>${badgeTipo(l.tipo)}</td>
+        <td><strong>${l.dias}</strong></td>
+        <td>${l.fecha}</td>
+        <td>${badgeEstado(l.estado)}</td>
+        <td><button class="btn-del" onclick="eliminar(${l.id})" title="Eliminar">✕</button></td>
+      </tr>
+    `).join('');
+    actualizarStats();
+  }
+
+  function actualizarStats() {
+    document.getElementById('cntTotal').textContent    = licencias.length;
+    document.getElementById('cntActiva').textContent   = licencias.filter(l => l.estado === 'Activa').length;
+    document.getElementById('cntPendiente').textContent= licencias.filter(l => l.estado === 'Pendiente').length;
+    document.getElementById('cntDias').textContent     = licencias.reduce((s, l) => s + l.dias, 0);
+  }
+
+  function eliminar(id) {
+    licencias = licencias.filter(l => l.id !== id);
+    renderTabla();
+  }
+
+  function filtrarTabla(texto) {
+    const filtrado = licencias.filter(l =>
+      l.trabajador.toLowerCase().includes(texto.toLowerCase()) ||
+      l.tipo.toLowerCase().includes(texto.toLowerCase())
+    );
+    renderTabla(filtrado);
+  }
+
+  // ── Guardar licencia desde el formulario ──
+  function guardarLicencia() {
+    const trabajador = document.getElementById('fTrabajador').value;
+    const tipo       = document.getElementById('fTipo').value;
+    const dias       = parseInt(document.getElementById('fDias').value);
+    const fecha      = document.getElementById('fFecha').value;
+
+    // Validación básica
+    if (!trabajador || !tipo || !dias || !fecha) {
+      alert('Por favor completa: Trabajador, Tipo, Días y Fecha de inicio.');
+      return;
+    }
+
+    licencias.unshift({ id: nextId++, trabajador, tipo, dias, fecha, estado: 'Pendiente' });
+    renderTabla();
+
+    // Mostrar mensaje de éxito
+    const msg = document.getElementById('msgExito');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+
+    limpiarFormulario();
+  }
+
+  function limpiarFormulario() {
+    ['fTrabajador','fTipo','fDias','fFecha','fMotivo','fNumero'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+    });
+  }
+
+  // Fecha de hoy por defecto
+  document.getElementById('fFecha').valueAsDate = new Date();
+
+  renderTabla();
+</script>
+
+</body>
+</html>
