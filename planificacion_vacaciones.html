@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planificación de Vacaciones</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      padding: 20px;
+    }
+
+    nav {
+      background: #2c3e50;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    nav strong { font-size: 16px; }
+    nav span   { font-size: 13px; opacity: 0.7; }
+
+    /* ── Resumen cards ── */
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 960px;
+      margin: 0 auto 20px;
+    }
+    .res-card {
+      background: white;
+      border-radius: 10px;
+      padding: 14px 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      border-left: 4px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .res-card.azul   { border-left-color: #3498db; }
+    .res-card.verde  { border-left-color: #27ae60; }
+    .res-card.naranja{ border-left-color: #e67e22; }
+    .res-card.rojo   { border-left-color: #e74c3c; }
+
+    .res-icono { font-size: 22px; }
+    .res-num {
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .res-card.azul    .res-num { color: #3498db; }
+    .res-card.verde   .res-num { color: #27ae60; }
+    .res-card.naranja .res-num { color: #e67e22; }
+    .res-card.rojo    .res-num { color: #e74c3c; }
+    .res-label { font-size: 11px; color: #888; margin-top: 2px; }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 960px;
+      margin: 0 auto 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .toolbar h2 { font-size: 15px; color: #555; }
+
+    .toolbar-right { display: flex; gap: 8px; align-items: center; }
+
+    input[type="text"] {
+      padding: 7px 12px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 13px;
+      width: 200px;
+      outline: none;
+    }
+    input[type="text"]:focus { border-color: #3498db; }
+
+    select {
+      padding: 7px 10px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 13px;
+      outline: none;
+      background: white;
+      color: #333;
+    }
+
+    button {
+      padding: 7px 14px;
+      border: none;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.85; }
+    .btn-primary { background: #3498db; color: white; }
+    .btn-success { background: #27ae60; color: white; }
+
+    /* ── Tabla principal ── */
+    .tabla-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead {
+      background: #f8f9fa;
+    }
+    th {
+      text-align: left;
+      padding: 11px 16px;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover { color: #555; }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f5f5f5;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    /* Avatar */
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+      color: white;
+      margin-right: 8px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .trabajador-cell {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .trabajador-info {}
+    .trabajador-nombre { font-weight: 600; color: #2c3e50; }
+    .trabajador-cargo  { font-size: 11px; color: #aaa; }
+
+    /* Badge de estado */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+    .badge-disponible { background: #d5f5e3; color: #1e8449; }
+    .badge-vacaciones { background: #d6eaf8; color: #2471a3; }
+    .badge-pendiente  { background: #fdebd0; color: #d35400; }
+    .badge-vencido    { background: #fadbd8; color: #c0392b; }
+
+    /* Barra de días usados */
+    .dias-wrap { min-width: 120px; }
+    .dias-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+    .barra-track {
+      background: #eee;
+      border-radius: 10px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .barra-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+    .fill-verde  { background: #27ae60; }
+    .fill-naranja{ background: #e67e22; }
+    .fill-rojo   { background: #e74c3c; }
+
+    /* Días pendientes destacados */
+    .dias-pendientes {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .dias-pendientes.verde  { color: #27ae60; }
+    .dias-pendientes.naranja{ color: #e67e22; }
+    .dias-pendientes.rojo   { color: #e74c3c; }
+
+    /* Botones de acción por fila */
+    .acciones-fila { display: flex; gap: 6px; }
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: white;
+      color: #555;
+      cursor: pointer;
+    }
+    .btn-sm:hover { background: #f0f0f0; opacity: 1; }
+    .btn-sm.aprobar { border-color: #27ae60; color: #27ae60; }
+    .btn-sm.aprobar:hover { background: #d5f5e3; }
+
+    /* Footer de la tabla */
+    .tabla-footer {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: #aaa;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .scrum-tag {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: #9b59b6;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+
+<nav>
+  <strong>👥 Módulo Recursos Humanos</strong>
+  <span>RRHH &rsaquo; Planificación de Vacaciones</span>
+</nav>
+
+<!-- Resumen -->
+<div class="resumen">
+  <div class="res-card azul">
+    <div class="res-icono">👥</div>
+    <div>
+      <div class="res-num" id="totalTrabajadores">8</div>
+      <div class="res-label">Trabajadores</div>
+    </div>
+  </div>
+  <div class="res-card verde">
+    <div class="res-icono">✅</div>
+    <div>
+      <div class="res-num" id="totalDisponibles">4</div>
+      <div class="res-label">Disponibles</div>
+    </div>
+  </div>
+  <div class="res-card azul" style="border-left-color:#3498db">
+    <div class="res-icono">🌴</div>
+    <div>
+      <div class="res-num" id="totalVacaciones" style="color:#3498db">2</div>
+      <div class="res-label">De vacaciones</div>
+    </div>
+  </div>
+  <div class="res-card rojo">
+    <div class="res-icono">⚠️</div>
+    <div>
+      <div class="res-num" id="totalVencidos">2</div>
+      <div class="res-label">Días por vencer</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <h2>Lista de Trabajadores</h2>
+  <div class="toolbar-right">
+    <input type="text" id="buscador" placeholder="🔍 Buscar trabajador..." oninput="renderTabla()"/>
+    <select id="filtroEstado" onchange="renderTabla()">
+      <option value="todos">Todos los estados</option>
+      <option value="Disponible">Disponible</option>
+      <option value="De vacaciones">De vacaciones</option>
+      <option value="Pendiente">Solicitud pendiente</option>
+      <option value="Vencido">Días por vencer</option>
+    </select>
+    <button class="btn-success" onclick="alert('Abrir formulario de solicitud de vacaciones')">+ Nueva Solicitud</button>
+  </div>
+</div>
+
+<!-- Tabla -->
+<div class="tabla-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Trabajador</th>
+        <th>Departamento</th>
+        <th>Días usados / Total</th>
+        <th>Días pendientes</th>
+        <th>Estado</th>
+        <th>Próximas vacaciones</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoTabla"></tbody>
+  </table>
+  <div class="tabla-footer">
+    <span id="footerCount">Mostrando 8 trabajadores</span>
+    <span>Año 2025 · Actualizado hoy</span>
+  </div>
+</div>
+
+<script>
+  const COLORES_AVATAR = ['#3498db','#e74c3c','#27ae60','#9b59b6','#e67e22','#1abc9c','#e91e63','#607d8b'];
+
+  const trabajadores = [
+    { id:1, nombre:'Juan Pérez',      cargo:'Analista TI',       depto:'Tecnología',    diasUsados:10, diasTotal:15, estado:'Disponible',     proxVac:'15/07/2025' },
+    { id:2, nombre:'María López',     cargo:'Desarrolladora',    depto:'Tecnología',    diasUsados:15, diasTotal:15, estado:'De vacaciones',   proxVac:'En curso'   },
+    { id:3, nombre:'Carlos Gómez',    cargo:'Contador',          depto:'Finanzas',      diasUsados:5,  diasTotal:15, estado:'Disponible',      proxVac:'01/08/2025' },
+    { id:4, nombre:'Ana Martínez',    cargo:'RRHH',              depto:'RRHH',          diasUsados:12, diasTotal:15, estado:'Pendiente',       proxVac:'Solicitado' },
+    { id:5, nombre:'Pedro Rojas',     cargo:'Vendedor Sr.',      depto:'Ventas',        diasUsados:0,  diasTotal:15, estado:'Vencido',         proxVac:'Sin agendar'},
+    { id:6, nombre:'Valentina Silva', cargo:'Diseñadora UX',     depto:'Tecnología',    diasUsados:8,  diasTotal:15, estado:'Disponible',      proxVac:'20/09/2025' },
+    { id:7, nombre:'Diego Fuentes',   cargo:'Jefe de Bodega',    depto:'Logística',     diasUsados:15, diasTotal:15, estado:'De vacaciones',   proxVac:'En curso'   },
+    { id:8, nombre:'Camila Torres',   cargo:'Asistente Admin.',  depto:'Administración',diasUsados:2,  diasTotal:15, estado:'Vencido',         proxVac:'Sin agendar'},
+  ];
+
+  function iniciales(nombre) {
+    return nombre.split(' ').map(p => p[0]).join('').substring(0,2).toUpperCase();
+  }
+
+  function claseBadge(estado) {
+    return { 'Disponible':'badge-disponible', 'De vacaciones':'badge-vacaciones', 'Pendiente':'badge-pendiente', 'Vencido':'badge-vencido' }[estado] || '';
+  }
+
+  function claseColor(pendientes) {
+    if (pendientes === 0)  return 'verde';
+    if (pendientes <= 3)   return 'naranja';
+    return 'rojo';
+  }
+
+  function claseBarra(pct) {
+    if (pct >= 100) return 'fill-verde';
+    if (pct >= 60)  return 'fill-naranja';
+    return 'fill-rojo';
+  }
+
+  function renderTabla() {
+    const busqueda = document.getElementById('buscador').value.toLowerCase();
+    const filtro   = document.getElementById('filtroEstado').value;
+
+    const filtrados = trabajadores.filter(t => {
+      const coincideNombre = t.nombre.toLowerCase().includes(busqueda) || t.depto.toLowerCase().includes(busqueda);
+      const coincideEstado = filtro === 'todos' || t.estado === filtro;
+      return coincideNombre && coincideEstado;
+    });
+
+    const tbody = document.getElementById('cuerpoTabla');
+    tbody.innerHTML = filtrados.map((t, i) => {
+      const pendientes = t.diasTotal - t.diasUsados;
+      const pct = Math.round((t.diasUsados / t.diasTotal) * 100);
+      const colorPend = claseColor(pendientes);
+      const colorBarra = claseBarra(pct);
+      const colorAvatar = COLORES_AVATAR[i % COLORES_AVATAR.length];
+
+      return `<tr>
+        <td>
+          <div class="trabajador-cell">
+            <div class="avatar" style="background:${colorAvatar}">${iniciales(t.nombre)}</div>
+            <div class="trabajador-info">
+              <div class="trabajador-nombre">${t.nombre}</div>
+              <div class="trabajador-cargo">${t.cargo}</div>
+            </div>
+          </div>
+        </td>
+        <td>${t.depto}</td>
+        <td>
+          <div class="dias-wrap">
+            <div class="dias-label-row">
+              <span>${t.diasUsados} usados</span>
+              <span>${t.diasTotal} totales</span>
+            </div>
+            <div class="barra-track">
+              <div class="barra-fill ${colorBarra}" style="width:${pct}%"></div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span class="dias-pendientes ${colorPend}">${pendientes}</span>
+          <span style="font-size:11px;color:#aaa;"> días</span>
+        </td>
+        <td><span class="badge ${claseBadge(t.estado)}">${t.estado}</span></td>
+        <td style="font-size:12px;color:#666;">${t.proxVac}</td>
+        <td>
+          <div class="acciones-fila">
+            <button class="btn-sm" onclick="alert('Ver detalle de ${t.nombre}')">Ver</button>
+            ${t.estado === 'Pendiente' ? `<button class="btn-sm aprobar" onclick="aprobar(${t.id})">✓ Aprobar</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('footerCount').textContent = `Mostrando ${filtrados.length} trabajador${filtrados.length !== 1 ? 'es' : ''}`;
+  }
+
+  function aprobar(id) {
+    const t = trabajadores.find(t => t.id === id);
+    if (t) {
+      t.estado = 'De vacaciones';
+      t.proxVac = 'En curso';
+      renderTabla();
+      actualizarContadores();
+    }
+  }
+
+  function actualizarContadores() {
+    document.getElementById('totalTrabajadores').textContent = trabajadores.length;
+    document.getElementById('totalDisponibles').textContent  = trabajadores.filter(t => t.estado === 'Disponible').length;
+    document.getElementById('totalVacaciones').textContent   = trabajadores.filter(t => t.estado === 'De vacaciones').length;
+    document.getElementById('totalVencidos').textContent     = trabajadores.filter(t => t.estado === 'Vencido').length;
+  }
+
+  renderTabla();
+  actualizarContadores();
+</script>
+
+</body>
+</html>
