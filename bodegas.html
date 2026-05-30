@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Bodegas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      padding: 20px;
+    }
+
+    nav {
+      background: #2c3e50;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    nav strong { font-size: 16px; }
+    nav span { font-size: 13px; opacity: 0.7; }
+
+    /* ── Tarjetas resumen ── */
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 900px;
+      margin: 0 auto 20px;
+    }
+    .resumen-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .resumen-card .numero {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .resumen-card .numero.verde   { color: #27ae60; }
+    .resumen-card .numero.naranja { color: #e67e22; }
+    .resumen-card .etiqueta {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* ── Contenedor principal ── */
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── Cards de cada bodega ── */
+    .bodega-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .bodega-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .bodega-titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bodega-icono {
+      font-size: 22px;
+    }
+    .bodega-nombre {
+      font-size: 16px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .bodega-codigo {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .estado-badge {
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .estado-ok     { background: #d5f5e3; color: #27ae60; }
+    .estado-alerta { background: #fdebd0; color: #e67e22; }
+    .estado-critico{ background: #fadbd8; color: #e74c3c; }
+
+    /* Barra de capacidad */
+    .capacidad-row {
+      padding: 12px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .cap-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .barra-wrap {
+      background: #eee;
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .barra-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+    .fill-ok     { background: #27ae60; }
+    .fill-warn   { background: #e67e22; }
+    .fill-danger { background: #e74c3c; }
+
+    /* Tabla de productos dentro de la bodega */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 8px 20px;
+      background: #f8f9fa;
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    td {
+      padding: 9px 20px;
+      border-top: 1px solid #f0f0f0;
+      color: #444;
+    }
+    tr:hover td { background: #fafafa; }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .tag-ok     { background: #d5f5e3; color: #27ae60; }
+    .tag-bajo   { background: #fdebd0; color: #e67e22; }
+    .tag-critico{ background: #fadbd8; color: #e74c3c; }
+
+    /* Botón agregar */
+    .btn-agregar {
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-agregar:hover { background: #2980b9; }
+
+    /* Buscador */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto 16px;
+    }
+    .buscador {
+      padding: 8px 14px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 13px;
+      width: 240px;
+      outline: none;
+    }
+    .buscador:focus { border-color: #3498db; }
+
+    .scrum-tag {
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      background: #3498db;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scrum-tag">SCRUM-33</div>
+
+<nav>
+  <strong>📦 Sistema de Inventario</strong>
+  <span>Inventario &rsaquo; Bodegas</span>
+</nav>
+
+<!-- Resumen -->
+<div class="resumen">
+  <div class="resumen-card">
+    <div class="numero verde">3</div>
+    <div class="etiqueta">Bodegas activas</div>
+  </div>
+  <div class="resumen-card">
+    <div class="numero">318</div>
+    <div class="etiqueta">Productos distintos</div>
+  </div>
+  <div class="resumen-card">
+    <div class="numero naranja">7</div>
+    <div class="etiqueta">Alertas de stock bajo</div>
+  </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <h2 style="font-size:15px;color:#555;">Lista de Bodegas</h2>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <input class="buscador" type="text" placeholder="🔍 Buscar bodega..." oninput="filtrarBodegas(this.value)"/>
+    <button class="btn-agregar" onclick="alert('Formulario para nueva bodega')">+ Nueva Bodega</button>
+  </div>
+</div>
+
+<div class="contenedor" id="listaBodegas">
+
+  <!-- ── Bodega Norte ── -->
+  <div class="bodega-card" data-nombre="bodega norte">
+    <div class="bodega-head">
+      <div class="bodega-titulo">
+        <span class="bodega-icono">🏭</span>
+        <div>
+          <div class="bodega-nombre">Bodega Norte</div>
+          <div class="bodega-codigo">BOD-001 · Santiago Norte</div>
+        </div>
+      </div>
+      <span class="estado-badge estado-ok">● Operativa</span>
+    </div>
+
+    <div class="capacidad-row">
+      <div class="cap-label-row">
+        <span>Capacidad utilizada</span>
+        <span>5,200 / 8,000 unidades (65%)</span>
+      </div>
+      <div class="barra-wrap">
+        <div class="barra-fill fill-warn" style="width:65%"></div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Stock</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>PROD-001</td><td>Sensor HC-SR04</td><td>104 un.</td><td><span class="tag tag-ok">OK</span></td></tr>
+        <tr><td>PROD-002</td><td>Arduino UNO R3</td><td>8 un.</td><td><span class="tag tag-bajo">Bajo mín.</span></td></tr>
+        <tr><td>PROD-003</td><td>LCD 16x2 I2C</td><td>215 un.</td><td><span class="tag tag-ok">OK</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Bodega Sur ── -->
+  <div class="bodega-card" data-nombre="bodega sur">
+    <div class="bodega-head">
+      <div class="bodega-titulo">
+        <span class="bodega-icono">🏗️</span>
+        <div>
+          <div class="bodega-nombre">Bodega Sur</div>
+          <div class="bodega-codigo">BOD-002 · Santiago Sur</div>
+        </div>
+      </div>
+      <span class="estado-badge estado-alerta">⚠ Casi llena</span>
+    </div>
+
+    <div class="capacidad-row">
+      <div class="cap-label-row">
+        <span>Capacidad utilizada</span>
+        <span>4,700 / 5,000 unidades (94%)</span>
+      </div>
+      <div class="barra-wrap">
+        <div class="barra-fill fill-danger" style="width:94%"></div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Stock</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>PROD-001</td><td>Sensor HC-SR04</td><td>40 un.</td><td><span class="tag tag-ok">OK</span></td></tr>
+        <tr><td>PROD-005</td><td>Raspberry Pi 4</td><td>3 un.</td><td><span class="tag tag-critico">Crítico</span></td></tr>
+        <tr><td>PROD-006</td><td>Módulo WiFi ESP32</td><td>88 un.</td><td><span class="tag tag-ok">OK</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Bodega Central ── -->
+  <div class="bodega-card" data-nombre="bodega central">
+    <div class="bodega-head">
+      <div class="bodega-titulo">
+        <span class="bodega-icono">🏢</span>
+        <div>
+          <div class="bodega-nombre">Bodega Central</div>
+          <div class="bodega-codigo">BOD-003 · Casa Matriz</div>
+        </div>
+      </div>
+      <span class="estado-badge estado-ok">● Operativa</span>
+    </div>
+
+    <div class="capacidad-row">
+      <div class="cap-label-row">
+        <span>Capacidad utilizada</span>
+        <span>1,940 / 6,000 unidades (32%)</span>
+      </div>
+      <div class="barra-wrap">
+        <div class="barra-fill fill-ok" style="width:32%"></div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Stock</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>PROD-010</td><td>Protoboard 830p</td><td>140 un.</td><td><span class="tag tag-ok">OK</span></td></tr>
+        <tr><td>PROD-011</td><td>Cable Dupont x40</td><td>320 un.</td><td><span class="tag tag-ok">OK</span></td></tr>
+        <tr><td>PROD-012</td><td>Resistencia 1kΩ x100</td><td>0 un.</td><td><span class="tag tag-critico">Sin stock</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- fin listaBodegas -->
+
+<script>
+  function filtrarBodegas(texto) {
+    const cards = document.querySelectorAll('.bodega-card');
+    cards.forEach(card => {
+      const nombre = card.getAttribute('data-nombre');
+      card.style.display = nombre.includes(texto.toLowerCase()) ? 'block' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
