@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguridad LTDA - ERP Portal de Inicio</title>
+    <!-- Enlace al archivo CSS maestro -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Cabecera Principal -->
+        <header>
+            <h1>Seguridad LTDA <span>ERP</span></h1>
+            <p>Control de Recurso Humano, Manejo de Bodega, Inventarios y Portal de Autogestión</p>
+        </header>
+
+        <!-- Rejilla Principal de Módulos -->
+        <main class="dashboard-grid">
+
+            <!-- CARD 1: MÓDULO RECURSOS HUMANOS -->
+            <section class="card rrhh">
+                <div class="card-header">
+                    <h2>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        Recursos Humanos
+                    </h2>
+                </div>
+                <div class="buttons-list">
+                    <button onclick="window.location.href='ficha_personal.html'" class="btn">1. Completa Ficha del
+                        Personal</button>
+                    <button class="btn">2. Modelo de Cálculo Paramétrico</button>
+                    <button class="btn">3. Contratos y Finiquitos</button>
+                    <button class="btn">4. Licencias Médicas</button>
+                    <button class="btn">5. Control de Asistencia</button>
+                    <button class="btn">6. Planificación de Vacaciones</button>
+                    <button class="btn">7. Consultas / Informes RRHH</button>
+                </div>
+            </section>
+
+            <!-- CARD 2: PORTAL DEL EMPLEADO -->
+            <section class="card empleado">
+                <div class="card-header">
+                    <h2>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        Portal del Empleado
+                    </h2>
+                </div>
+                <div class="buttons-list">
+                    <button class="btn">1. Actualizar Información Personal</button>
+                    <button class="btn">2. Imprimir Liquidaciones</button>
+                    <button class="btn">3. Solicitar Vacaciones e Imprimir</button>
+                </div>
+            </section>
+
+            <!-- CARD 3: MÓDULO INVENTARIO / VENTAS -->
+            <section class="card inventario">
+                <div class="card-header">
+                    <h2>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                        </svg>
+                        Inventario y Bodegas
+                    </h2>
+                </div>
+                <div class="buttons-list">
+                    <button class="btn">1. Completa Ficha de Productos</button>
+                    <button class="btn">2. Emisión de Etiquetas</button>
+                    <button class="btn">3. Múltiples Bodegas</button>
+                </div>
+            </section>
+
+            <!-- CARD 4: PORTAL DEL CLIENTE - VENTA -->
+            <section class="card cliente">
+                <div class="card-header">
+                    <h2>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                        Portal del Cliente
+                    </h2>
+                </div>
+                <div class="buttons-list">
+                    <button class="btn">1. Catálogo de Productos Insumos</button>
+                    <button class="btn">2. Una Búsqueda Optimizada</button>
+                    <button class="btn">3. Inventario en Tiempo Real</button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Pie de Página -->
+        <footer>
+            <p>&copy; 2026 Seguridad LTDA. ERP Corporativo. Todos los derechos reservados.</p>
+        </footer>
+
+    </div>
+
+</body>
