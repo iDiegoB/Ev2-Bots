@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Personal - Seguridad LTDA</title>
+    <style>
+        /* Estilos autocontenidos y modernos para visualización premium instantánea */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-top: 3rem;
+        }
+
+        .form-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-top: 5px solid #2563eb;
+            /* Azul Seguridad */
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        }
+
+        .form-card h1 {
+            font-size: 1.6rem;
+            color: #0f172a;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .form-card label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .form-card input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            color: #0f172a;
+            background-color: #f8fafc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .form-card input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-card br {
+            display: none;
+            /* Ocultamos los <br> del formulario básico para usar el espaciado semántico moderno en CSS */
+        }
+
+        .form-card button {
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.8rem;
+            background-color: #2563eb;
+            color: white;
+            border: 1px solid #2563eb;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .form-card button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .form-card button:active {
+            transform: scale(0.98);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="form-card">
+            <h1>Ficha de Personal - Seguridad LTDA</h1>
+
+            <form>
+                <label>Nombre:</label> <input type="text"><br>
+                <label>RUT:</label> <input type="text"><br>
+                <label>Cargo:</label> <input type="text"><br>
+                <button>Guardar Ficha</button>
+            </form>
+
+            <a href="index.html" class="back-link">&larr; Volver al Inicio</a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
