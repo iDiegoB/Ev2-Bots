@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ficha de Producto</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      padding: 20px;
+    }
+
+    /* ── Barra de navegación simple ── */
+    nav {
+      background: #2c3e50;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    nav span { font-size: 14px; opacity: 0.7; }
+    nav strong { font-size: 16px; }
+
+    /* ── Tarjeta principal ── */
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    /* Cabecera de la tarjeta */
+    .card-header {
+      background: #2c3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-header h1 { font-size: 18px; }
+    .badge {
+      background: #27ae60;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .badge.warning { background: #e67e22; }
+
+    /* Cuerpo de la tarjeta */
+    .card-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+    }
+
+    /* Columna izquierda: foto */
+    .foto-col {
+      padding: 24px;
+      border-right: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .foto-col img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #eee;
+    }
+    .codigo-label {
+      font-size: 13px;
+      color: #666;
+    }
+    .codigo-valor {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    /* Columna derecha: info */
+    .info-col {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .producto-nombre {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .producto-categoria {
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* Grid de datos */
+    .datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .dato {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .dato-label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dato-valor {
+      font-size: 16px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-top: 2px;
+    }
+    .dato-valor.verde { color: #27ae60; }
+    .dato-valor.naranja { color: #e67e22; }
+
+    /* Barra de stock */
+    .stock-section { }
+    .stock-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #555;
+    }
+    .barra-wrap {
+      background: #eee;
+      border-radius: 10px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .barra-fill {
+      height: 100%;
+      background: #27ae60;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    /* Botones */
+    .botones {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.85; }
+    .btn-primary { background: #3498db; color: white; }
+    .btn-success { background: #27ae60; color: white; }
+    .btn-danger  { background: #e74c3c; color: white; }
+
+    /* Footer de la tarjeta */
+    .card-footer {
+      border-top: 1px solid #eee;
+      padding: 14px 24px;
+      font-size: 12px;
+      color: #aaa;
+      text-align: right;
+    }
+
+    /* Tag de SCRUM */
+    .scrum-tag {
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      background: #3498db;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scrum-tag">SCRUM-32</div>
+
+<nav>
+  <strong>📦 Sistema de Inventario</strong>
+  <span>Inventario &rsaquo; Productos &rsaquo; PROD-001</span>
+</nav>
+
+<div class="card">
+
+  <div class="card-header">
+    <h1>Ficha de Producto</h1>
+    <span class="badge">● Activo</span>
+  </div>
+
+  <div class="card-body">
+
+    <!-- Foto -->
+    <div class="foto-col">
+      <img src="https://images.unsplash.com/photo-1581092336035-bbd9f6e22013?w=300&q=80" alt="Foto del producto"/>
+      <div class="codigo-label">Código</div>
+      <div class="codigo-valor">PROD-001</div>
+    </div>
+
+    <!-- Información -->
+    <div class="info-col">
+
+      <div>
+        <div class="producto-nombre">Sensor Ultrasónico HC-SR04</div>
+        <div class="producto-categoria">Categoría: Electrónica &bull; SKU: HC-SR04</div>
+      </div>
+
+      <!-- Datos básicos en grid -->
+      <div class="datos-grid">
+        <div class="dato">
+          <div class="dato-label">Precio de Venta</div>
+          <div class="dato-valor">$4.990</div>
+        </div>
+        <div class="dato">
+          <div class="dato-label">Costo</div>
+          <div class="dato-valor">$2.800</div>
+        </div>
+        <div class="dato">
+          <div class="dato-label">Proveedor</div>
+          <div class="dato-valor" style="font-size:14px;">ElecDist S.A.</div>
+        </div>
+        <div class="dato">
+          <div class="dato-label">Unidad</div>
+          <div class="dato-valor" style="font-size:14px;">Unidad (UN)</div>
+        </div>
+      </div>
+
+      <!-- Stock -->
+      <div class="stock-section">
+        <div class="stock-label-row">
+          <span>Stock en Bodega</span>
+          <span><strong id="stockNum">50</strong> / 200 unidades</span>
+        </div>
+        <div class="barra-wrap">
+          <div class="barra-fill" id="barraStock" style="width: 25%"></div>
+        </div>
+        <div style="font-size:12px; color:#aaa; margin-top:4px;">
+          Mínimo: 10 un. &nbsp;|&nbsp; Máximo: 200 un.
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="botones">
+        <button class="btn-primary" onclick="consultarStock()">🔍 Consultar Stock</button>
+        <button class="btn-success" onclick="alert('Redirigiendo a edición...')">✏️ Editar</button>
+        <button class="btn-danger"  onclick="alert('Desactivar producto?')">🗑 Desactivar</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card-footer">
+    Última actualización: 10/06/2025 14:32 &nbsp;|&nbsp; Usuario: admin
+  </div>
+
+</div>
+
+<script>
+  // Simula actualizar el stock con un número aleatorio
+  function consultarStock() {
+    const nuevo = Math.floor(Math.random() * 150) + 10;
+    document.getElementById('stockNum').textContent = nuevo;
+    const pct = (nuevo / 200) * 100;
+    document.getElementById('barraStock').style.width = pct + '%';
+    document.getElementById('barraStock').style.background =
+      nuevo < 20 ? '#e74c3c' : nuevo < 50 ? '#e67e22' : '#27ae60';
+    alert('Stock actualizado: ' + nuevo + ' unidades');
+  }
+</script>
+
+</body>
+</html>
