@@ -1,0 +1,209 @@
+/* ==========================================================================
+   ESTILOS BASE - ERP SEGURIDAD LTDA
+   ========================================================================== */
+
+/* Importación de Tipografía Outfit desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Paleta de Colores Base */
+  --bg-global: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --card-bg: #ffffff;
+  
+  /* Colores Identificativos de Módulos (Acentos) */
+  --accent-rrhh: #2563eb;       /* Azul Seguridad */
+  --accent-empleado: #8b5cf6;   /* Morado Portal */
+  --accent-inventario: #10b981; /* Verde Inventario */
+  --accent-cliente: #f59e0b;    /* Ámbar Cliente */
+  
+  /* Estados Generales */
+  --primary-dark: #0f172a;
+}
+
+/* Reset de Márgenes e Interfaz */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-global);
+  color: var(--text-main);
+  line-height: 1.6;
+  padding: 2.5rem 1.5rem;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Cabecera Principal */
+header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-dark);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+header h1 span {
+  color: var(--accent-rrhh);
+}
+
+header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* Rejilla de Módulos (Responsive) */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+/* Estilos de Tarjetas (Módulos) */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.025);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+/* Bordes Superiores de Acento de Tarjetas */
+.card.rrhh { border-top: 5px solid var(--accent-rrhh); }
+.card.empleado { border-top: 5px solid var(--accent-empleado); }
+.card.inventario { border-top: 5px solid var(--accent-inventario); }
+.card.cliente { border-top: 5px solid var(--accent-cliente); }
+
+/* Cabecera de cada Tarjeta */
+.card-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Colores de Títulos por Módulo */
+.card.rrhh .card-header h2 { color: var(--accent-rrhh); }
+.card.empleado .card-header h2 { color: var(--accent-empleado); }
+.card.inventario .card-header h2 { color: var(--accent-inventario); }
+.card.cliente .card-header h2 { color: var(--accent-cliente); }
+
+/* Lista de Botones (Apartados) */
+.buttons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-grow: 1;
+}
+
+/* Estilo del Botón de Apartado */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.8rem 1.1rem;
+  background-color: var(--bg-global);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+
+/* Transiciones al pasar el mouse por encima de los botones (efecto dinámico de acento) */
+.card.rrhh .btn:hover {
+  background-color: var(--accent-rrhh);
+  color: #ffffff;
+  border-color: var(--accent-rrhh);
+  transform: translateX(4px);
+}
+
+.card.empleado .btn:hover {
+  background-color: var(--accent-empleado);
+  color: #ffffff;
+  border-color: var(--accent-empleado);
+  transform: translateX(4px);
+}
+
+.card.inventario .btn:hover {
+  background-color: var(--accent-inventario);
+  color: #ffffff;
+  border-color: var(--accent-inventario);
+  transform: translateX(4px);
+}
+
+.card.cliente .btn:hover {
+  background-color: var(--accent-cliente);
+  color: #ffffff;
+  border-color: var(--accent-cliente);
+  transform: translateX(4px);
+}
+
+/* Flecha Interactiva al pasar el mouse */
+.btn::after {
+  content: '→';
+  font-size: 1.1rem;
+  opacity: 0.4;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn:hover::after {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* Footer Opcional */
+footer {
+  text-align: center;
+  margin-top: 4rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Adaptación para Pantallas Pequeñas */
+@media (max-width: 640px) {
+  body {
+    padding: 1.5rem 1rem;
+  }
+  header h1 {
+    font-size: 2rem;
+  }
+  header {
+    margin-bottom: 2rem;
+  }
+}
