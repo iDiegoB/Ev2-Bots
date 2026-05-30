@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal del Empleado - Vacaciones</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f1ec;
+      --card: #ffffff;
+      --primary: #2c5f4a;
+      --accent: #e8c547;
+      --text: #1a1a1a;
+      --muted: #7a7a7a;
+      --border: #e0dbd0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .portal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .portal-header .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .portal-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .badge-dias {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary);
+      color: #fff;
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+
+    .badge-dias span {
+      background: var(--accent);
+      color: var(--primary);
+      font-weight: 700;
+      border-radius: 50%;
+      width: 1.6rem;
+      height: 1.6rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.6rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="date"]:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1.5rem 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 0.6rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover { background: #1e4233; }
+    button:active { transform: scale(0.99); }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-header">
+    <div class="logo">Portal del Empleado</div>
+    <h1>Solicitar Vacaciones</h1>
+    <div class="badge-dias">
+      Días disponibles: <span>15</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="form-group">
+      <label for="inicio">Fecha de inicio</label>
+      <input type="date" id="inicio">
+    </div>
+
+    <div class="form-group">
+      <label for="termino">Fecha de término</label>
+      <input type="date" id="termino">
+    </div>
+
+    <div class="divider"></div>
+
+    <button type="button">Enviar Solicitud</button>
+  </div>
+
+  <p class="footer-note">Tu solicitud será revisada por RRHH en un plazo de 48 hrs hábiles.</p>
+
+</body>
+</html>

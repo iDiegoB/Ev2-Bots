@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal del Empleado - Información Personal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f1ec;
+      --card: #ffffff;
+      --primary: #2c5f4a;
+      --accent: #e8c547;
+      --text: #1a1a1a;
+      --muted: #7a7a7a;
+      --border: #e0dbd0;
+      --success: #d4edda;
+      --success-text: #1e4233;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .portal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .portal-header .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .portal-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 0.3rem;
+    }
+
+    .portal-header p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      width: 100%;
+      max-width: 560px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    /* Avatar / cabecera del perfil */
+    .perfil-header {
+      background: var(--primary);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .perfil-info .nombre {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .perfil-info .cargo {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 0.15rem;
+    }
+
+    /* Secciones del formulario */
+    .form-body {
+      padding: 1.8rem 2rem;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 1.2rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.55rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      appearance: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.2rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 1.6rem;
+    }
+
+    /* Alerta informativa */
+    .alerta {
+      background: #fef9e7;
+      border: 1px solid #f0d060;
+      border-radius: 0.55rem;
+      padding: 0.7rem 1rem;
+      font-size: 0.82rem;
+      color: #7a5f00;
+      margin-bottom: 1.6rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .alerta span { flex-shrink: 0; }
+
+    /* Botones */
+    .btn-group {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .btn-cancelar {
+      flex: 1;
+      padding: 0.8rem;
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 0.55rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-cancelar:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    .btn-guardar {
+      flex: 2;
+      padding: 0.8rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 0.55rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-guardar:hover { background: #1e4233; }
+    .btn-guardar:active { transform: scale(0.99); }
+
+    /* Toast de éxito */
+    .toast {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--success);
+      color: var(--success-text);
+      border: 1px solid #a8d5b5;
+      border-radius: 0.55rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+
+    .toast.visible { display: flex; }
+
+    /* Footer */
+    .card-footer {
+      padding: 0.9rem 2rem;
+      background: #fafaf7;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-header">
+    <div class="logo">Portal del Empleado</div>
+    <h1>Información Personal</h1>
+    <p>Mantén tus datos actualizados para una mejor gestión</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Cabecera perfil -->
+    <div class="perfil-header">
+      <div class="avatar">JP</div>
+      <div class="perfil-info">
+        <div class="nombre">Juan Pérez González</div>
+        <div class="cargo">Analista TI &nbsp;·&nbsp; RUT: 12.345.678-9</div>
+      </div>
+    </div>
+
+    <div class="form-body">
+
+      <!-- Datos de contacto -->
+      <div class="section-title">Datos de contacto</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" value="+56 9 8765 4321">
+        </div>
+        <div class="form-group">
+          <label for="email">Correo personal</label>
+          <input type="email" id="email" value="juan.perez@gmail.com">
+        </div>
+        <div class="form-group full">
+          <label for="direccion">Dirección</label>
+          <input type="text" id="direccion" value="Av. Bernardo O'Higgins 1234, Concepción">
+        </div>
+        <div class="form-group">
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" value="Concepción">
+        </div>
+        <div class="form-group">
+          <label for="region">Región</label>
+          <select id="region">
+            <option>Región del Biobío</option>
+            <option>Región Metropolitana</option>
+            <option>Región de Valparaíso</option>
+            <option>Región de La Araucanía</option>
+            <option>Región de Los Lagos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Contacto de emergencia -->
+      <div class="section-title">Contacto de emergencia</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="contacto-nombre">Nombre completo</label>
+          <input type="text" id="contacto-nombre" value="María González">
+        </div>
+        <div class="form-group">
+          <label for="contacto-relacion">Relación</label>
+          <select id="contacto-relacion">
+            <option>Familiar</option>
+            <option>Cónyuge</option>
+            <option>Amigo/a</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="contacto-tel">Teléfono de emergencia</label>
+          <input type="tel" id="contacto-tel" value="+56 9 9876 5432">
+        </div>
+      </div>
+
+      <!-- Alerta -->
+      <div class="alerta">
+        <span>⚠️</span>
+        Los cambios en RUT, nombre legal o fecha de nacimiento deben solicitarse directamente a RRHH.
+      </div>
+
+      <!-- Botones -->
+      <div class="btn-group">
+        <button class="btn-cancelar" onclick="cancelar()">Cancelar</button>
+        <button class="btn-guardar" onclick="guardar()">Guardar cambios</button>
+      </div>
+
+      <!-- Toast éxito -->
+      <div class="toast" id="toast">
+        ✅ &nbsp;Información actualizada correctamente.
+      </div>
+
+    </div>
+
+    <div class="card-footer">
+      Última actualización: 12 de marzo, 2026 &nbsp;·&nbsp; Portal del Empleado
+    </div>
+
+  </div>
+
+  <script>
+    function guardar() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 3500);
+    }
+
+    function cancelar() {
+      document.getElementById('telefono').value = '+56 9 8765 4321';
+      document.getElementById('email').value = 'juan.perez@gmail.com';
+      document.getElementById('direccion').value = "Av. Bernardo O'Higgins 1234, Concepción";
+      document.getElementById('ciudad').value = 'Concepción';
+      document.getElementById('contacto-nombre').value = 'María González';
+      document.getElementById('contacto-tel').value = '+56 9 9876 5432';
+    }
+  </script>
+
+</body>
+</html>
