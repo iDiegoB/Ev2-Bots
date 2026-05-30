@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal del Empleado - Liquidación</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f1ec;
+      --card: #ffffff;
+      --primary: #2c5f4a;
+      --accent: #e8c547;
+      --danger: #c0392b;
+      --text: #1a1a1a;
+      --muted: #7a7a7a;
+      --border: #e0dbd0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .portal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .portal-header .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .portal-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 0.3rem;
+    }
+
+    .recibo {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+
+    /* Cabecera del recibo */
+    .recibo-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recibo-header .empresa {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+    }
+
+    .recibo-header .periodo {
+      font-size: 0.82rem;
+      opacity: 0.8;
+      margin-top: 0.2rem;
+    }
+
+    .recibo-header .mes-badge {
+      background: var(--accent);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Info empleado */
+    .empleado-info {
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      background: #fafaf7;
+    }
+
+    .info-item label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .info-item span {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* Tabla haberes y descuentos */
+    .recibo-body {
+      padding: 1.5rem 2rem;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+    }
+
+    tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child { border-bottom: none; }
+
+    td {
+      padding: 0.55rem 0;
+      font-size: 0.93rem;
+      color: var(--text);
+    }
+
+    td:last-child {
+      text-align: right;
+      font-weight: 500;
+    }
+
+    .monto-neg { color: var(--danger); }
+
+    /* Totales */
+    .totales {
+      border-top: 2px solid var(--border);
+      padding-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .total-row.liquido {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.75rem 1rem;
+      border-radius: 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 0.4rem;
+    }
+
+    /* Footer */
+    .recibo-footer {
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: #fafaf7;
+    }
+
+    .btn-imprimir {
+      display: block;
+      width: calc(100% - 4rem);
+      margin: 1rem 2rem 1.5rem;
+      padding: 0.75rem;
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 0.6rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-imprimir:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-header">
+    <div class="logo">Portal del Empleado</div>
+    <h1>Liquidación de Sueldo</h1>
+  </div>
+
+  <div class="recibo">
+
+    <!-- Cabecera -->
+    <div class="recibo-header">
+      <div>
+        <div class="empresa">Empresa S.A.</div>
+        <div class="periodo">RUT: 76.123.456-7 &nbsp;|&nbsp; Período: Mayo 2026</div>
+      </div>
+      <div class="mes-badge">Mayo 2026</div>
+    </div>
+
+    <!-- Info empleado -->
+    <div class="empleado-info">
+      <div class="info-item">
+        <label>Nombre</label>
+        <span>Juan Pérez González</span>
+      </div>
+      <div class="info-item">
+        <label>RUT</label>
+        <span>12.345.678-9</span>
+      </div>
+      <div class="info-item">
+        <label>Cargo</label>
+        <span>Analista TI</span>
+      </div>
+      <div class="info-item">
+        <label>Días trabajados</label>
+        <span>30</span>
+      </div>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="recibo-body">
+
+      <!-- Haberes -->
+      <div class="section-title">Haberes</div>
+      <table>
+        <tr><td>Sueldo base</td><td>$800.000</td></tr>
+        <tr><td>Bono de responsabilidad</td><td>$100.000</td></tr>
+        <tr><td>Horas extra</td><td>$45.000</td></tr>
+        <tr><td>Colación</td><td>$30.000</td></tr>
+      </table>
+
+      <!-- Descuentos -->
+      <div class="section-title">Descuentos</div>
+      <table>
+        <tr><td>AFP (10%)</td><td class="monto-neg">- $80.000</td></tr>
+        <tr><td>Salud (7%)</td><td class="monto-neg">- $56.000</td></tr>
+        <tr><td>Impuesto único</td><td class="monto-neg">- $35.000</td></tr>
+      </table>
+
+      <!-- Totales -->
+      <div class="totales">
+        <div class="total-row">
+          <span>Total haberes</span>
+          <span>$975.000</span>
+        </div>
+        <div class="total-row">
+          <span>Total descuentos</span>
+          <span class="monto-neg">- $171.000</span>
+        </div>
+        <div class="total-row liquido">
+          <span>Líquido a pagar</span>
+          <span>$804.000</span>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="btn-imprimir" onclick="window.print()">🖨 Imprimir / Descargar PDF</button>
+
+    <div class="recibo-footer">
+      Documento generado automáticamente por el Portal del Empleado &nbsp;·&nbsp; Mayo 2026
+    </div>
+
+  </div>
+
+</body>
+</html>
