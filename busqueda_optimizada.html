@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal del Cliente - Búsqueda</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f1ec;
+      --card: #ffffff;
+      --primary: #2c5f4a;
+      --accent: #e8c547;
+      --text: #1a1a1a;
+      --muted: #7a7a7a;
+      --border: #e0dbd0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .portal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .portal-header .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .portal-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 0.3rem;
+    }
+
+    /* Barra de búsqueda */
+    .search-wrapper {
+      max-width: 620px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 0.8rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      padding: 0 1rem;
+      color: var(--muted);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 0.85rem 0;
+      border: none;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .search-box input::placeholder { color: var(--muted); }
+
+    .btn-buscar {
+      padding: 0.85rem 1.4rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-buscar:hover { background: #1e4233; }
+
+    /* Filtros rápidos */
+    .filtros-rapidos {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      max-width: 620px;
+      margin: 0 auto 2rem;
+    }
+
+    .tag {
+      padding: 0.3rem 0.9rem;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tag:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Contador de resultados */
+    .resultado-info {
+      max-width: 700px;
+      margin: 0 auto 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Lista de resultados */
+    .resultados {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .resultado-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0.8rem;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: box-shadow 0.2s;
+    }
+
+    .resultado-item:hover {
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    }
+
+    .resultado-icono {
+      font-size: 1.8rem;
+      width: 48px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .resultado-datos { flex: 1; }
+
+    .resultado-nombre {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.97rem;
+    }
+
+    .resultado-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    .resultado-meta span {
+      margin-right: 1rem;
+    }
+
+    .stock {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 1rem;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .stock.disponible { background: #d4edda; color: #1e4233; }
+    .stock.bajo       { background: #fff3cd; color: #7a5f00; }
+    .stock.agotado    { background: #f8d7da; color: #721c24; }
+
+    /* Sin resultados / estado inicial */
+    .estado-vacio {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+
+    .estado-vacio .icono { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    .estado-vacio p { font-size: 0.93rem; }
+
+    .btn-volver {
+      display: block;
+      width: fit-content;
+      margin: 2rem auto 0;
+      padding: 0.7rem 1.6rem;
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 0.55rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-volver:hover { background: var(--primary); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div class="portal-header">
+    <div class="logo">Portal del Cliente</div>
+    <h1>Búsqueda de Productos</h1>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="search-wrapper">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="input-busqueda" placeholder="Buscar por nombre, código o categoría..." oninput="buscar()">
+      <button class="btn-buscar" onclick="buscar()">Buscar</button>
+    </div>
+  </div>
+
+  <!-- Filtros rápidos -->
+  <div class="filtros-rapidos">
+    <span class="tag" onclick="buscarTag('seguridad')">🔒 Seguridad</span>
+    <span class="tag" onclick="buscarTag('electronico')">📷 Electrónico</span>
+    <span class="tag" onclick="buscarTag('insumo')">🔦 Insumos</span>
+    <span class="tag" onclick="buscarTag('disponible')">✅ Disponible</span>
+  </div>
+
+  <!-- Info resultados -->
+  <div class="resultado-info" id="resultado-info"></div>
+
+  <!-- Resultados -->
+  <div class="resultados" id="resultados">
+    <div class="estado-vacio">
+      <div class="icono">🗂️</div>
+      <p>Escribe en el buscador para encontrar productos.</p>
+    </div>
+  </div>
+
+  <button class="btn-volver" onclick="window.location.href='index.html'">← Volver al inicio</button>
+
+  <script>
+    const productos = [
+      { nombre: 'Candado de Alta Seguridad',  codigo: 'SEG-001', cat: 'seguridad',   icono: '🔒', stock: 'disponible' },
+      { nombre: 'Cámara IP 1080p',            codigo: 'ELE-012', cat: 'electronico', icono: '📷', stock: 'disponible' },
+      { nombre: 'Alarma Perimetral',          codigo: 'ELE-023', cat: 'electronico', icono: '🚨', stock: 'bajo'       },
+      { nombre: 'Chaleco Reflectante',        codigo: 'SEG-045', cat: 'seguridad',   icono: '🦺', stock: 'disponible' },
+      { nombre: 'Linterna Táctica LED',       codigo: 'INS-007', cat: 'insumo',      icono: '🔦', stock: 'disponible' },
+      { nombre: 'Batería de Respaldo',        codigo: 'INS-019', cat: 'insumo',      icono: '🔋', stock: 'agotado'    },
+      { nombre: 'Monitor de Control 24"',     codigo: 'ELE-031', cat: 'electronico', icono: '🖥️', stock: 'bajo'       },
+      { nombre: 'Lector de Tarjetas RFID',    codigo: 'SEG-062', cat: 'seguridad',   icono: '🪪', stock: 'disponible' },
+    ];
+
+    const stockLabel = { disponible: 'Disponible', bajo: 'Stock bajo', agotado: 'Agotado' };
+
+    function renderizar(lista) {
+      const cont = document.getElementById('resultados');
+      const info = document.getElementById('resultado-info');
+
+      if (lista === null) {
+        cont.innerHTML = `<div class="estado-vacio"><div class="icono">🗂️</div><p>Escribe en el buscador para encontrar productos.</p></div>`;
+        info.textContent = '';
+        return;
+      }
+
+      info.textContent = `${lista.length} resultado${lista.length !== 1 ? 's' : ''} encontrado${lista.length !== 1 ? 's' : ''}`;
+
+      if (lista.length === 0) {
+        cont.innerHTML = `<div class="estado-vacio"><div class="icono">😕</div><p>No se encontraron productos.</p></div>`;
+        return;
+      }
+
+      cont.innerHTML = lista.map(p => `
+        <div class="resultado-item">
+          <div class="resultado-icono">${p.icono}</div>
+          <div class="resultado-datos">
+            <div class="resultado-nombre">${p.nombre}</div>
+            <div class="resultado-meta">
+              <span>Cód: ${p.codigo}</span>
+              <span>${p.cat.charAt(0).toUpperCase() + p.cat.slice(1)}</span>
+            </div>
+          </div>
+          <span class="stock ${p.stock}">${stockLabel[p.stock]}</span>
+        </div>
+      `).join('');
+    }
+
+    function buscar() {
+      const q = document.getElementById('input-busqueda').value.trim().toLowerCase();
+      if (!q) { renderizar(null); return; }
+      const res = productos.filter(p =>
+        p.nombre.toLowerCase().includes(q) ||
+        p.codigo.toLowerCase().includes(q) ||
+        p.cat.toLowerCase().includes(q) ||
+        p.stock.toLowerCase().includes(q)
+      );
+      renderizar(res);
+    }
+
+    function buscarTag(tag) {
+      document.getElementById('input-busqueda').value = tag;
+      buscar();
+    }
+
+    document.getElementById('input-busqueda').addEventListener('keydown', e => {
+      if (e.key === 'Enter') buscar();
+    });
+  </script>
+
+</body>
+</html>
