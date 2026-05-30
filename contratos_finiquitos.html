@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contratos y Finiquitos - Seguridad LTDA</title>
+  <style>
+    /* Estilos base y variables HSL para integración premium */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Barra de navegación */
+    nav {
+      background: #0f172a;
+      /* Slate oscuro */
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    nav strong {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav span {
+      font-size: 13px;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    nav a {
+      color: #3b82f6;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #60a5fa;
+    }
+
+    /* Layout principal */
+    .layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 950px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Paneles */
+    .panel {
+      background: white;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    /* Formularios */
+    .campo-grupo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .campo {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    select,
+    input[type="text"],
+    input[type="date"],
+    input[type="number"] {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      background: white;
+      color: #0f172a;
+      transition: all 0.2s;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Botones */
+    .btn {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secundario {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      margin-top: 8px;
+    }
+
+    .btn-secundario:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      margin-top: 8px;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* Contenedor Hoja A4 Mockup */
+    .documento-hoja {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      padding: 50px 60px;
+      min-height: 750px;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #111827;
+      position: relative;
+      outline: none;
+    }
+
+    @media (max-width: 600px) {
+      .documento-hoja {
+        padding: 30px 20px;
+      }
+    }
+
+    .documento-hoja h2 {
+      font-family: 'Outfit', sans-serif;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 10px;
+    }
+
+    .documento-hoja p {
+      margin-bottom: 18px;
+      text-align: justify;
+    }
+
+    .highlight-var {
+      background: #eff6ff;
+      border-bottom: 1px dashed #2563eb;
+      color: #1e40af;
+      padding: 0 4px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      border-radius: 4px;
+    }
+
+    .firma-seccion {
+      margin-top: 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      text-align: center;
+    }
+
+    .firma-linea {
+      border-top: 1px solid #111827;
+      padding-top: 8px;
+      font-size: 13px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+    }
+
+    /* Notificación emergente Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tag-editor {
+      background: #3b82f6;
+      color: white;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* Estilos para impresión impecable del documento */
+    @media print {
+      body {
+        background: white !important;
+        padding: 0 !important;
+      }
+
+      nav,
+      .panel-header,
+      .panel:nth-child(1),
+      .panel:nth-child(2),
+      div:has(> .panel),
+      .tag-editor,
+      .toast,
+      .btn {
+        display: none !important;
+      }
+
+      .layout {
+        display: block !important;
+        gap: 0 !important;
+      }
+
+      .panel {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+
+      .panel-body {
+        padding: 0 !important;
+        background: transparent !important;
+      }
+
+      .documento-hoja {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        min-height: auto !important;
+        font-size: 12pt !important;
+      }
+
+      .firma-seccion {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- Navegación -->
+    <nav>
+      <strong>👤 Sistema de Recursos Humanos</strong>
+      <span>RRHH &rsaquo; <a href="index.html">Inicio</a> &rsaquo; Contratos y Finiquitos</span>
+    </nav>
+
+    <div class="layout">
+
+      <!-- Columna Izquierda: Parámetros del Generador -->
+      <div>
+        <div class="panel">
+          <div class="panel-header">📄 Tipo de Documento</div>
+          <div class="panel-body">
+            <div class="campo">
+              <label>Seleccionar Plantilla</label>
+              <select id="selectPlantilla" onchange="cargarPlantilla()">
+                <option value="CONTRATO_INDEFINIDO">Contrato de Trabajo (Indefinido)</option>
+                <option value="CONTRATO_PLAZO">Contrato de Trabajo (Plazo Fijo)</option>
+                <option value="FINIQUITO">Finiquito de Relación Laboral</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">⚙️ Parámetros del Documento</div>
+          <div class="panel-body">
+
+            <div class="campo">
+              <label>Nombre del Empleado</label>
+              <input type="text" id="empNombre" value="Diego Benítez" oninput="actualizarDocumento()" />
+            </div>
+
+            <div class="campo-grupo">
+              <div class="campo">
+                <label>RUT Empleado</label>
+                <input type="text" id="empRut" value="12.845.392-K" oninput="actualizarDocumento()" />
+              </div>
+              <div class="campo">
+                <label>Cargo</label>
+                <input type="text" id="empCargo" value="Guardia de Seguridad" oninput="actualizarDocumento()" />
+              </div>
+            </div>
+
+            <div class="campo">
+              <label>Domicilio Empleado</label>
+              <input type="text" id="empDomicilio" value="Av. Libertador 4580, Depto 402, Santiago"
+                oninput="actualizarDocumento()" />
+            </div>
+
+            <div class="campo-grupo">
+              <div class="campo">
+                <label>Sueldo Base ($)</label>
+                <input type="number" id="empSueldo" value="650000" oninput="actualizarDocumento()" />
+              </div>
+              <div class="campo">
+                <label>Fecha Inicio</label>
+                <input type="date" id="fechaInicio" value="2026-03-01" onchange="actualizarDocumento()" />
+              </div>
+            </div>
+
+            <!-- Campos condicionales para Plazo Fijo o Finiquito -->
+            <div id="seccionCondicional">
+              <!-- Cargado dinámicamente según la plantilla -->
+            </div>
+
+            <button class="btn" onclick="guardarBorrador()">💾 Guardar Borrador</button>
+            <button class="btn btn-secundario" onclick="imprimirDocumento()">🖨️ Imprimir Documento</button>
+            <button class="btn btn-danger" onclick="restablecerCampos()">🔄 Restablecer Parámetros</button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Vista Previa y Editor del Documento -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>👁️ Editor de Plantilla y Vista Previa (Modo Interactivo)</span>
+          <span class="tag-editor">Contenido editable</span>
+        </div>
+        <div class="panel-body" style="background: #f1f5f9; padding: 24px;">
+
+          <!-- Hoja de papel editable -->
+          <div class="documento-hoja" id="hojaPapel" contenteditable="true">
+            <!-- El contenido se inyecta dinámicamente mediante JavaScript -->
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Notificación emergente Toast -->
+  <div class="toast" id="toast">
+    <span>🔔</span>
+    <span id="toastMsg">Documento guardado con éxito.</span>
+  </div>
+
+  <script>
+    // Plantillas base de documentos con marcadores de posición
+    const plantillas = {
+      CONTRATO_INDEFINIDO: {
+        titulo: "CONTRATO DE TRABAJO INDEFINIDO",
+        cuerpo: `
+        <p>En Santiago de Chile, a <span class="highlight-var" id="var_fecha_hoy">[FECHA_HOY]</span>, entre la empresa <strong>SEGURIDAD LTDA</strong>, RUT 76.543.210-K, con domicilio en Calle Nueva York 80, Santiago, representada legalmente por don <strong>Juan Pérez Larraín</strong>, RUT 9.876.543-2, en adelante "el Empleador", y don(ña) <span class="highlight-var" id="var_nombre">[NOMBRE]</span>, de nacionalidad chilena, nacido(a) el 12 de abril de 1988, RUT <span class="highlight-var" id="var_rut">[RUT]</span>, de profesión u oficio <span class="highlight-var" id="var_cargo">[CARGO]</span>, domiciliado(a) en <span class="highlight-var" id="var_domicilio">[DOMICILIO]</span>, en adelante "el Trabajador", se ha convenido el siguiente contrato de trabajo:</p>
+        
+        <p><strong>PRIMERO:</strong> El Trabajador se compromete a desempeñar las funciones de <span class="highlight-var" id="var_cargo2">[CARGO]</span> en las instalaciones que el Empleador determine a nivel nacional. Sus labores principales consistirán en la vigilancia, control de acceso, patrullajes y reporte de novedades del recinto asignado, debiendo acatar las directrices e instrucciones de seguridad vigentes.</p>
+        
+        <p><strong>SEGUNDO:</strong> La jornada de trabajo será de 45 horas semanales, distribuidas de lunes a viernes en turnos fijos coordinados por la jefatura directa, respetando los límites de descanso establecidos en el Código del Trabajo.</p>
+        
+        <p><strong>TERCERO:</strong> El Empleador se compromete a pagar al Trabajador una remuneración mensual ascendente a la suma de <strong>$<span class="highlight-var" id="var_sueldo">[SUELDO]</span> pesos líquidos</strong> mensuales, pagaderos el último día hábil de cada mes calendario.</p>
+        
+        <p><strong>CUARTO:</strong> El presente contrato comenzará a regir formalmente con fecha <span class="highlight-var" id="var_fecha_inicio">[FECHA_INICIO]</span> y tendrá una duración de carácter indefinido. La vigencia quedará sujeta al cumplimiento de las obligaciones contractuales y las leyes laborales del país.</p>
+        
+        <p>Para constancia de lo convenido, y en señal de absoluta conformidad, las partes firman el presente instrumento en dos ejemplares del mismo tenor, quedando uno en poder de cada contratante.</p>
+        
+        <div class="firma-seccion">
+          <div>
+            <div style="height: 60px;"></div>
+            <div class="firma-linea">FIRMA EMPLEADOR<br/>SEGURIDAD LTDA</div>
+          </div>
+          <div>
+            <div style="height: 60px;"></div>
+            <div class="firma-linea">FIRMA TRABAJADOR<br/>RUT: <span id="var_firma_rut">[RUT]</span></div>
+          </div>
+        </div>
+      `
+      },
+      CONTRATO_PLAZO: {
+        titulo: "CONTRATO DE TRABAJO A PLAZO FIJO",
+        cuerpo: `
+        <p>En Santiago de Chile, a <span class="highlight-var" id="var_fecha_hoy">[FECHA_HOY]</span>, entre la empresa <strong>SEGURIDAD LTDA</strong>, RUT 76.543.210-K, con domicilio en Calle Nueva York 80, Santiago, representada legalmente por don <strong>Juan Pérez Larraín</strong>, en adelante "el Empleador", y don(ña) <span class="highlight-var" id="var_nombre">[NOMBRE]</span>, RUT <span class="highlight-var" id="var_rut">[RUT]</span>, de profesión u oficio <span class="highlight-var" id="var_cargo">[CARGO]</span>, domiciliado(a) en <span class="highlight-var" id="var_domicilio">[DOMICILIO]</span>, en adelante "el Trabajador", se ha convenido el siguiente contrato de trabajo a plazo:</p>
+        
+        <p><strong>PRIMERO:</strong> El Trabajador desempeñará las funciones específicas de <span class="highlight-var" id="var_cargo2">[CARGO]</span>, asumiendo tareas de resguardo y seguridad de bienes e instalaciones asignados por el Empleador.</p>
+        
+        <p><strong>SEGUNDO:</strong> El Empleador pagará al Trabajador una remuneración mensual de <strong>$<span class="highlight-var" id="var_sueldo">[SUELDO]</span> pesos líquidos</strong>, sujeta a los descuentos legales correspondientes por cotizaciones previsionales y de salud.</p>
+        
+        <p><strong>TERCERO:</strong> El presente contrato comenzará a regir el <span class="highlight-var" id="var_fecha_inicio">[FECHA_INICIO]</span> y tendrá vigencia expresa hasta el <span class="highlight-var" id="var_fecha_termino">[FECHA_TERMINO]</span>, fecha en la cual caducará automáticamente de pleno derecho de acuerdo al artículo 159 N°4 del Código del Trabajo chileno.</p>
+        
+        <p>Las partes firman en señal de aceptación en dos ejemplares de igual valor.</p>
+        
+        <div class="firma-seccion">
+          <div>
+            <div style="height: 60px;"></div>
+            <div class="firma-linea">FIRMA EMPLEADOR<br/>SEGURIDAD LTDA</div>
+          </div>
+          <div>
+            <div style="height: 60px;"></div>
+            <div class="firma-linea">FIRMA TRABAJADOR<br/>RUT: <span id="var_firma_rut">[RUT]</span></div>
+          </div>
+        </div>
+      `
+      },
+      FINIQUITO: {
+        titulo: "FINIQUITO DE RELACIÓN LABORAL",
+        cuerpo: `
+        <p>En Santiago de Chile, a <span class="highlight-var" id="var_fecha_hoy">[FECHA_HOY]</span>, comparecen don(ña) <span class="highlight-var" id="var_nombre">[NOMBRE]</span>, RUT <span class="highlight-var" id="var_rut">[RUT]</span>, domiciliado(a) en <span class="highlight-var" id="var_domicilio">[DOMICILIO]</span>, por una parte como el Trabajador, y por la otra SEGURIDAD LTDA, representada por don Juan Pérez Larraín, en su calidad de Empleador, quienes exponen y acuerdan el siguiente finiquito:</p>
+        
+        <p><strong>PRIMERO:</strong> Las partes dejan expresa constancia de que la relación laboral que las unía inició el <span class="highlight-var" id="var_fecha_inicio">[FECHA_INICIO]</span> y ha terminado formalmente con fecha <span class="highlight-var" id="var_fecha_termino">[FECHA_TERMINO]</span>, debido a la causal del <strong>Artículo <span class="highlight-var" id="var_causal">[CAUSAL]</span></strong> del Código del Trabajo.</p>
+        
+        <p><strong>SEGUNDO:</strong> El Trabajador declara recibir en este acto, a su entera y total conformidad, la suma líquida de <strong>$<span class="highlight-var" id="var_monto_finiquito">[MONTO_FINIQUITO]</span> pesos</strong> por concepto de indemnizaciones por años de servicio, vacaciones proporcionales y remuneraciones pendientes correspondientes al periodo final de servicio.</p>
+        
+        <p><strong>TERCERO:</strong> Mediante la firma del presente instrumento, el Trabajador declara que el Empleador no le adeuda suma alguna por conceptos laborales ni previsionales, otorgándose mutuamente el más amplio y completo finiquito, libre de toda reclamación posterior.</p>
+        
+        <div class="firma-seccion">
+          <div>
+            <div style="height: 60px;"></div>
+            <div class="firma-linea">FIRMA COMPARECIENTE EMPLEADOR<br/>SEGURIDAD LTDA</div>
+          </div>
+          <div>
+            <div style="height: 60px;"></div>
+            <div class="firma-linea">FIRMA TRABAJADOR EN CONFORMIDAD<br/>RUT: <span id="var_firma_rut">[RUT]</span></div>
+          </div>
+        </div>
+      `
+      }
+    };
+
+    // Muestra notificaciones flotantes
+    function mostrarToast(mensaje) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = mensaje;
+      toast.classList.add('visible');
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3000);
+    }
+
+    // Carga y renderiza los campos condicionales según el tipo de documento seleccionado
+    function cargarPlantilla() {
+      const tipo = document.getElementById('selectPlantilla').value;
+      const condicionalDiv = document.getElementById('seccionCondicional');
+
+      if (tipo === 'CONTRATO_PLAZO') {
+        condicionalDiv.innerHTML = `
+        <div class="campo">
+          <label>Fecha Término Contrato</label>
+          <input type="date" id="fechaTermino" value="2026-09-01" onchange="actualizarDocumento()"/>
+        </div>
+      `;
+      } else if (tipo === 'FINIQUITO') {
+        condicionalDiv.innerHTML = `
+        <div class="campo">
+          <label>Fecha Término Relación</label>
+          <input type="date" id="fechaTermino" value="2026-05-30" onchange="actualizarDocumento()"/>
+        </div>
+        <div class="campo">
+          <label>Causal de Término</label>
+          <select id="causalTermino" onchange="actualizarDocumento()">
+            <option value="159 N°1 (Mutuo acuerdo)">Art. 159 N°1 - Mutuo acuerdo de las partes</option>
+            <option value="159 N°4 (Vencimiento del plazo)">Art. 159 N°4 - Vencimiento del plazo convenido</option>
+            <option value="161 (Necesidades de la empresa)">Art. 161 - Necesidades de la empresa</option>
+            <option value="160 N°7 (Incumplimiento grave)">Art. 160 N°7 - Incumplimiento grave de las obligaciones</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Monto del Finiquito ($)</label>
+          <input type="number" id="montoFiniquito" value="480000" oninput="actualizarDocumento()"/>
+        </div>
+      `;
+      } else {
+        condicionalDiv.innerHTML = '';
+      }
+
+      actualizarDocumento();
+    }
+
+    // Actualiza la hoja de previsualización en tiempo real basándose en los inputs
+    function actualizarDocumento() {
+      const tipo = document.getElementById('selectPlantilla').value;
+      const plantilla = plantillas[tipo];
+
+      // Datos generales
+      const nombre = document.getElementById('empNombre').value || '[NOMBRE]';
+      const rut = document.getElementById('empRut').value || '[RUT]';
+      const cargo = document.getElementById('empCargo').value || '[CARGO]';
+      const domicilio = document.getElementById('empDomicilio').value || '[DOMICILIO]';
+      const sueldo = parseFloat(document.getElementById('empSueldo').value || 0).toLocaleString('es-CL');
+
+      // Fechas formateadas
+      const fechaHoy = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      const fInicioRaw = document.getElementById('fechaInicio').value;
+      const fechaInicio = fInicioRaw ? formatearFecha(fInicioRaw) : '[FECHA_INICIO]';
+
+      // Inyección de estructura HTML inicial
+      const hoja = document.getElementById('hojaPapel');
+      hoja.innerHTML = `<h2>${plantilla.titulo}</h2>${plantilla.cuerpo}`;
+
+      // Reemplazos en la hoja inyectada
+      document.getElementById('var_fecha_hoy').textContent = fechaHoy;
+      document.getElementById('var_nombre').textContent = nombre;
+      document.getElementById('var_rut').textContent = rut;
+      document.getElementById('var_cargo').textContent = cargo;
+      document.getElementById('var_cargo2').textContent = cargo;
+      document.getElementById('var_domicilio').textContent = domicilio;
+      document.getElementById('var_sueldo').textContent = sueldo;
+      document.getElementById('var_fecha_inicio').textContent = fechaInicio;
+      document.getElementById('var_firma_rut').textContent = rut;
+
+      // Lógica para campos condicionales
+      if (tipo === 'CONTRATO_PLAZO') {
+        const fTerminoRaw = document.getElementById('fechaTermino').value;
+        const fechaTermino = fTerminoRaw ? formatearFecha(fTerminoRaw) : '[FECHA_TÉRMINO]';
+        document.getElementById('var_fecha_termino').textContent = fechaTermino;
+      } else if (tipo === 'FINIQUITO') {
+        const fTerminoRaw = document.getElementById('fechaTermino').value;
+        const fechaTermino = fTerminoRaw ? formatearFecha(fTerminoRaw) : '[FECHA_TÉRMINO]';
+        const causal = document.getElementById('causalTermino').value;
+        const monto = parseFloat(document.getElementById('montoFiniquito').value || 0).toLocaleString('es-CL');
+
+        document.getElementById('var_fecha_termino').textContent = fechaTermino;
+        document.getElementById('var_causal').textContent = causal;
+        document.getElementById('var_monto_finiquito').textContent = monto;
+      }
+    }
+
+    // Helper para convertir "YYYY-MM-DD" a "DD de Mes de YYYY"
+    function formatearFecha(fechaStr) {
+      const partes = fechaStr.split('-');
+      if (partes.length !== 3) return fechaStr;
+      const fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+      return fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    // Restablece todos los inputs a los datos predeterminados
+    function restablecerCampos() {
+      document.getElementById('empNombre').value = "Diego Benítez";
+      document.getElementById('empRut').value = "12.845.392-K";
+      document.getElementById('empCargo').value = "Guardia de Seguridad";
+      document.getElementById('empDomicilio').value = "Av. Libertador 4580, Depto 402, Santiago";
+      document.getElementById('empSueldo').value = "650000";
+      document.getElementById('fechaInicio').value = "2026-03-01";
+
+      cargarPlantilla();
+      mostrarToast("Valores de los parámetros restablecidos");
+    }
+
+    // Simula el guardado de borradores de contratos/finiquitos
+    function guardarBorrador() {
+      const nombre = document.getElementById('empNombre').value;
+      const tipo = document.getElementById('selectPlantilla').options[document.getElementById('selectPlantilla').selectedIndex].text;
+
+      mostrarToast(`Borrador de ${tipo} para ${nombre} guardado exitosamente.`);
+    }
+
+    // Activa el print dialog nativo del navegador enfocado únicamente en la hoja del documento
+    function imprimirDocumento() {
+      window.print();
+    }
+
+    // Carga inicial
+    cargarPlantilla();
+  </script>
+
+</body>
+
+</html>
