@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control de Asistencia - Seguridad LTDA</title>
+  <style>
+    /* Estilos base y variables HSL para integración premium */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Barra de navegación */
+    nav {
+      background: #0f172a;
+      /* Slate oscuro */
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    nav strong {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav span {
+      font-size: 13px;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    nav a {
+      color: #3b82f6;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #60a5fa;
+    }
+
+    /* Tarjetas Resumen */
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .resumen-card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .resumen-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+
+    .resumen-card.ok::before {
+      background: #10b981;
+    }
+
+    .resumen-card.warn::before {
+      background: #f59e0b;
+    }
+
+    .resumen-card.danger::before {
+      background: #ef4444;
+    }
+
+    .resumen-card .numero {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .resumen-card .numero.verde {
+      color: #10b981;
+    }
+
+    .resumen-card .numero.naranja {
+      color: #f59e0b;
+    }
+
+    .resumen-card .numero.rojo {
+      color: #ef4444;
+    }
+
+    .resumen-card .etiqueta {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Layout en rejilla */
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Paneles */
+    .panel {
+      background: white;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    /* Formulario */
+    .campo {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    select,
+    input[type="time"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      background: white;
+      color: #0f172a;
+      transition: all 0.2s;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Botones */
+    .btn-marcar {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background-color 0.2s, transform 0.1s;
+      font-family: inherit;
+    }
+
+    .btn-marcar:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-marcar:active {
+      transform: scale(0.98);
+    }
+
+    .btn-marcar.salida {
+      background: #475569;
+      margin-top: 10px;
+    }
+
+    .btn-marcar.salida:hover {
+      background: #334155;
+    }
+
+    /* Barra de filtros */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .buscador {
+      width: 250px;
+    }
+
+    @media (max-width: 600px) {
+      .buscador {
+        width: 100%;
+      }
+    }
+
+    /* Tabla */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #64748b;
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid #e2e8f0;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Badges de estado */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .badge.puntual {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge.atraso {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.falta {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge.licencia {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    /* Lista de turnos informativos */
+    .turnos-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .turno-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .turno-nombre {
+      font-weight: 600;
+      font-size: 12px;
+      color: #1e293b;
+    }
+
+    .turno-horas {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- Navegación -->
+    <nav>
+      <strong>👤 Sistema de Recursos Humanos</strong>
+      <span>RRHH &rsaquo; <a href="index.html">Inicio</a> &rsaquo; Control de Asistencia</span>
+    </nav>
+
+    <!-- Tarjetas Resumen -->
+    <div class="resumen">
+      <div class="resumen-card ok">
+        <div class="numero verde" id="pctAsistencia">92%</div>
+        <div class="etiqueta">Presentismo Diario</div>
+      </div>
+      <div class="resumen-card">
+        <div class="numero" id="totalPresentes">12</div>
+        <div class="etiqueta">Presentes Hoy</div>
+      </div>
+      <div class="resumen-card warn">
+        <div class="numero naranja" id="totalAtrasos">2</div>
+        <div class="etiqueta">Atrasos Registrados</div>
+      </div>
+      <div class="resumen-card danger">
+        <div class="numero rojo" id="totalFaltas">1</div>
+        <div class="etiqueta">Inasistencias Injustificadas</div>
+      </div>
+    </div>
+
+    <!-- Contenedor Principal Layout -->
+    <div class="layout">
+
+      <!-- Panel Lateral Izquierdo: Simulador Reloj Control -->
+      <div>
+        <div class="panel">
+          <div class="panel-header">🕰️ Simulador Reloj Control</div>
+          <div class="panel-body">
+            <p style="font-size:12px; color:#64748b; margin-bottom:14px; line-height: 1.4;">
+              Esta herramienta simula la captura automática de marcaciones del personal de Seguridad LTDA.
+            </p>
+
+            <div class="campo">
+              <label>Empleado</label>
+              <select id="selectEmpleado">
+                <option value="1|Diego Benítez|12.845.392-K">Diego Benítez (12.845.392-K)</option>
+                <option value="2|Ana María Silva|15.932.401-4">Ana María Silva (15.932.401-4)</option>
+                <option value="3|Carlos Fuentes|10.422.810-7">Carlos Fuentes (10.422.810-7)</option>
+                <option value="4|Patricia Toledo|17.409.182-3">Patricia Toledo (17.409.182-3)</option>
+                <option value="5|José Luis Romero|14.283.491-9">José Luis Romero (14.283.491-9)</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label>Turno de Trabajo</label>
+              <select id="selectTurno">
+                <option value="T-ADM|Turno Administrativo|08:00|17:00">Turno Administrativo (08:00 - 17:00)</option>
+                <option value="T-SEGA|Turno Seguridad Rotativo A|07:00|15:00">Turno Seguridad A (07:00 - 15:00)</option>
+                <option value="T-SEGB|Turno Seguridad Rotativo B|15:00|23:00">Turno Seguridad B (15:00 - 23:00)</option>
+                <option value="T-SEGN|Turno Seguridad Nocturno|23:00|07:00">Turno Seguridad Nocturno (23:00 - 07:00)
+                </option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label>Hora de Marcación</label>
+              <input type="time" id="horaMarcacion" value="08:00" />
+            </div>
+
+            <button class="btn-marcar" onclick="registrarMarcacion('ENTRADA')">📥 Registrar Entrada</button>
+            <button class="btn-marcar salida" onclick="registrarMarcacion('SALIDA')">📤 Registrar Salida</button>
+          </div>
+        </div>
+
+        <!-- Panel de Turnos -->
+        <div class="panel">
+          <div class="panel-header">⚙️ Turnos Parametrizados</div>
+          <div class="panel-body">
+            <div class="turnos-lista">
+              <div class="turno-item">
+                <div class="turno-nombre">👔 Turno Administrativo (L-V)</div>
+                <div class="turno-horas">08:00 a 17:00 · Tolerancia: 15 min</div>
+              </div>
+              <div class="turno-item">
+                <div class="turno-nombre">👮 Turno Seguridad Rotativo A</div>
+                <div class="turno-horas">07:00 a 15:00 · Tolerancia: 10 min</div>
+              </div>
+              <div class="turno-item">
+                <div class="turno-nombre">👮 Turno Seguridad Rotativo B</div>
+                <div class="turno-horas">15:00 a 23:00 · Tolerancia: 10 min</div>
+              </div>
+              <div class="turno-item">
+                <div class="turno-nombre">🌙 Turno Seguridad Nocturno</div>
+                <div class="turno-horas">23:00 a 07:00 · Tolerancia: 10 min</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Derecho: Bitácora de Marcaciones -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>📋 Registro Diario de Marcaciones</span>
+          <span style="font-size:12px; color:#64748b; font-weight: normal;" id="fechaHoy">29 de Mayo, 2026</span>
+        </div>
+        <div class="panel-body">
+
+          <!-- Toolbar con Filtros -->
+          <div class="toolbar">
+            <input class="buscador" type="text" id="buscadorInput" placeholder="🔍 Buscar empleado por nombre..."
+              oninput="filtrarTabla()" />
+            <div style="display:flex; gap:10px;">
+              <select style="width: 140px; padding: 6px 10px;" id="filtroEstado" onchange="filtrarTabla()">
+                <option value="TODOS">Todos los Estados</option>
+                <option value="PUNTUAL">Puntuales</option>
+                <option value="ATRASO">Atrasos</option>
+                <option value="FALTA">Inasistencias</option>
+                <option value="LICENCIA">Licencias</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tabla -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Empleado / RUT</th>
+                  <th>Turno</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
+                  <th>Horas Trab.</th>
+                  <th>Retraso</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tablaAsistencia">
+                <!-- Datos iniciales simulados -->
+                <tr data-nombre="diego benitez" data-estado="ATRASO">
+                  <td>
+                    <strong>Diego Benítez</strong><br />
+                    <span style="font-size:11px; color:#64748b;">12.845.392-K</span>
+                  </td>
+                  <td>T-ADM (08:00-17:00)</td>
+                  <td>08:24</td>
+                  <td>17:03</td>
+                  <td>8h 39m</td>
+                  <td style="color:#d97706; font-weight:500;">24 min</td>
+                  <td><span class="badge atraso">Atraso</span></td>
+                </tr>
+                <tr data-nombre="ana maria silva" data-estado="PUNTUAL">
+                  <td>
+                    <strong>Ana María Silva</strong><br />
+                    <span style="font-size:11px; color:#64748b;">15.932.401-4</span>
+                  </td>
+                  <td>T-ADM (08:00-17:00)</td>
+                  <td>07:54</td>
+                  <td>17:00</td>
+                  <td>9h 06m</td>
+                  <td style="color:#64748b;">Puntual</td>
+                  <td><span class="badge puntual">Puntual</span></td>
+                </tr>
+                <tr data-nombre="carlos fuentes" data-estado="PUNTUAL">
+                  <td>
+                    <strong>Carlos Fuentes</strong><br />
+                    <span style="font-size:11px; color:#64748b;">10.422.810-7</span>
+                  </td>
+                  <td>T-SEGA (07:00-15:00)</td>
+                  <td>06:58</td>
+                  <td>15:01</td>
+                  <td>8h 03m</td>
+                  <td style="color:#64748b;">Puntual</td>
+                  <td><span class="badge puntual">Puntual</span></td>
+                </tr>
+                <tr data-nombre="patricia toledo" data-estado="LICENCIA">
+                  <td>
+                    <strong>Patricia Toledo</strong><br />
+                    <span style="font-size:11px; color:#64748b;">17.409.182-3</span>
+                  </td>
+                  <td>T-SEGB (15:00-23:00)</td>
+                  <td>-- : --</td>
+                  <td>-- : --</td>
+                  <td>0h 00m</td>
+                  <td style="color:#64748b;">--</td>
+                  <td><span class="badge licencia">Licencia Médica</span></td>
+                </tr>
+                <tr data-nombre="jose luis romero" data-estado="FALTA">
+                  <td>
+                    <strong>José Luis Romero</strong><br />
+                    <span style="font-size:11px; color:#64748b;">14.283.491-9</span>
+                  </td>
+                  <td>T-ADM (08:00-17:00)</td>
+                  <td>-- : --</td>
+                  <td>-- : --</td>
+                  <td>0h 00m</td>
+                  <td style="color:#64748b;">--</td>
+                  <td><span class="badge falta">Inasistencia</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Notificación emergente Toast -->
+  <div class="toast" id="toast">
+    <span>🔔</span>
+    <span id="toastMsg">Registro guardado con éxito.</span>
+  </div>
+
+  <script>
+    // Inicialización de fecha actual en español
+    const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-CL', opciones);
+
+    // Marcaciones almacenadas dinámicamente en memoria local
+    const registros = {
+      "1": { nombre: "Diego Benítez", rut: "12.845.392-K", turnoCod: "T-ADM", turnoDesc: "T-ADM (08:00-17:00)", entrada: "08:24", salida: "17:03", estado: "ATRASO", atrasoMin: 24, horasTrab: "8h 39m" },
+      "2": { nombre: "Ana María Silva", rut: "15.932.401-4", turnoCod: "T-ADM", turnoDesc: "T-ADM (08:00-17:00)", entrada: "07:54", salida: "17:00", estado: "PUNTUAL", atrasoMin: 0, horasTrab: "9h 06m" },
+      "3": { nombre: "Carlos Fuentes", rut: "10.422.810-7", turnoCod: "T-SEGA", turnoDesc: "T-SEGA (07:00-15:00)", entrada: "06:58", salida: "15:01", estado: "PUNTUAL", atrasoMin: 0, horasTrab: "8h 03m" },
+      "4": { nombre: "Patricia Toledo", rut: "17.409.182-3", turnoCod: "T-SEGB", turnoDesc: "T-SEGB (15:00-23:00)", entrada: "-- : --", salida: "-- : --", estado: "LICENCIA", atrasoMin: 0, horasTrab: "0h 00m" },
+      "5": { nombre: "José Luis Romero", rut: "14.283.491-9", turnoCod: "T-ADM", turnoDesc: "T-ADM (08:00-17:00)", entrada: "-- : --", salida: "-- : --", estado: "FALTA", atrasoMin: 0, horasTrab: "0h 00m" }
+    };
+
+    // Muestra una notificación visual
+    function mostrarToast(mensaje) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = mensaje;
+      toast.classList.add('visible');
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3500);
+    }
+
+    // Registra marcación de entrada o salida
+    function registrarMarcacion(tipo) {
+      const empVal = document.getElementById('selectEmpleado').value;
+      const parts = empVal.split('|');
+      const empId = parts[0];
+      const empNombre = parts[1];
+      const empRut = parts[2];
+
+      const trVal = document.getElementById('selectTurno').value;
+      const trParts = trVal.split('|');
+      const trCod = trParts[0];
+      const trDesc = `${trCod} (${trParts[2]}-${trParts[3]})`;
+      const horaEntradaTurno = trParts[2];
+
+      const horaMarcada = document.getElementById('horaMarcacion').value;
+
+      if (!registros[empId]) {
+        registros[empId] = {
+          nombre: empNombre,
+          rut: empRut,
+          turnoCod: trCod,
+          turnoDesc: trDesc,
+          entrada: "-- : --",
+          salida: "-- : --",
+          estado: "FALTA",
+          atrasoMin: 0,
+          horasTrab: "0h 00m"
+        };
+      }
+
+      const reg = registros[empId];
+      reg.turnoCod = trCod;
+      reg.turnoDesc = trDesc;
+
+      if (tipo === 'ENTRADA') {
+        reg.entrada = horaMarcada;
+
+        // Calcular retraso
+        const tEntradaMin = timeToMinutes(horaEntradaTurno);
+        const tMarcadaMin = timeToMinutes(horaMarcada);
+        const tolerancia = trCod === 'T-ADM' ? 15 : 10;
+
+        const diferencia = tMarcadaMin - tEntradaMin;
+        if (diferencia > tolerancia) {
+          reg.atrasoMin = diferencia;
+          reg.estado = "ATRASO";
+        } else {
+          reg.atrasoMin = 0;
+          reg.estado = "PUNTUAL";
+        }
+
+        mostrarToast(`Entrada registrada para ${empNombre} a las ${horaMarcada}`);
+      } else if (tipo === 'SALIDA') {
+        if (reg.entrada === '-- : --') {
+          alert("¡Error! Debe registrar primero la Entrada antes de poder marcar la Salida.");
+          return;
+        }
+        reg.salida = horaMarcada;
+
+        // Calcular Horas Trabajadas
+        const tEnt = timeToMinutes(reg.entrada);
+        const tSal = timeToMinutes(horaMarcada);
+        let diff = tSal - tEnt;
+        if (diff < 0) diff += 1440; // Por si cruza medianoche
+
+        const horas = Math.floor(diff / 60);
+        const mins = diff % 60;
+        reg.horasTrab = `${horas}h ${mins.toString().padStart(2, '0')}m`;
+
+        mostrarToast(`Salida registrada para ${empNombre} a las ${horaMarcada}`);
+      }
+
+      renderTabla();
+      actualizarMetricas();
+    }
+
+    // Convierte "HH:MM" a minutos desde medianoche
+    function timeToMinutes(timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    // Dibuja la tabla según el objeto "registros"
+    function renderTabla() {
+      const tbody = document.getElementById('tablaAsistencia');
+      tbody.innerHTML = '';
+
+      for (const key in registros) {
+        const reg = registros[key];
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-nombre', reg.nombre.toLowerCase());
+        tr.setAttribute('data-estado', reg.estado);
+
+        let badgeClass = 'puntual';
+        let badgeLabel = 'Puntual';
+        if (reg.estado === 'ATRASO') { badgeClass = 'atraso'; badgeLabel = 'Atraso'; }
+        else if (reg.estado === 'FALTA') { badgeClass = 'falta'; badgeLabel = 'Inasistencia'; }
+        else if (reg.estado === 'LICENCIA') { badgeClass = 'licencia'; badgeLabel = 'Licencia'; }
+
+        let retrasoTexto = 'Puntual';
+        let retrasoColor = '#64748b';
+        if (reg.estado === 'ATRASO') {
+          retrasoTexto = `${reg.atrasoMin} min`;
+          retrasoColor = '#d97706';
+        } else if (reg.estado === 'FALTA' || reg.estado === 'LICENCIA') {
+          retrasoTexto = '--';
+        }
+
+        tr.innerHTML = `
+        <td>
+          <strong>${reg.nombre}</strong><br/>
+          <span style="font-size:11px; color:#64748b;">${reg.rut}</span>
+        </td>
+        <td>${reg.turnoDesc}</td>
+        <td>${reg.entrada}</td>
+        <td>${reg.salida}</td>
+        <td>${reg.horasTrab}</td>
+        <td style="color:${retrasoColor}; font-weight:500;">${retrasoTexto}</td>
+        <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+      `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // Filtra los datos de la tabla dinámicamente
+    function filtrarTabla() {
+      const buscar = document.getElementById('buscadorInput').value.toLowerCase();
+      const filtro = document.getElementById('filtroEstado').value;
+      const filas = document.querySelectorAll('#tablaAsistencia tr');
+
+      filas.forEach(fila => {
+        const nombre = fila.getAttribute('data-nombre');
+        const estado = fila.getAttribute('data-estado');
+
+        const matchesSearch = nombre.includes(buscar);
+        const matchesFiltro = (filtro === 'TODOS' || estado === filtro);
+
+        if (matchesSearch && matchesFiltro) {
+          fila.style.display = '';
+        } else {
+          fila.style.display = 'none';
+        }
+      });
+    }
+
+    // Recalcula los indicadores métricos superiores
+    function actualizarMetricas() {
+      let activos = 0;
+      let presentes = 0;
+      let atrasos = 0;
+      let faltas = 0;
+
+      for (const key in registros) {
+        activos++;
+        const reg = registros[key];
+        if (reg.entrada !== '-- : --') {
+          presentes++;
+        }
+        if (reg.estado === 'ATRASO') {
+          atrasos++;
+        }
+        if (reg.estado === 'FALTA') {
+          faltas++;
+        }
+      }
+
+      const pct = activos > 0 ? Math.round((presentes / (activos - 1)) * 100) : 100; // Restando Licencia para estadística de asistencia real
+      document.getElementById('pctAsistencia').textContent = `${Math.min(pct, 100)}%`;
+      document.getElementById('totalPresentes').textContent = presentes;
+      document.getElementById('totalAtrasos').textContent = atrasos;
+      document.getElementById('totalFaltas').textContent = faltas;
+    }
+
+    // Ajuste de métricas iniciales
+    actualizarMetricas();
+  </script>
+
+</body>
+
+</html>
